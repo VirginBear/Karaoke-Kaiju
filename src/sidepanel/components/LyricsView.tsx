@@ -51,6 +51,7 @@ import type { LyricsSyncState } from '../useLyricsLibrary';
 import type { PlaylistSyncState } from '../usePlaylistLibrary';
 
 import { detectChineseVariant, toSimplified, toTraditional } from '../../shared/chinese-convert';
+import { RELEASE_POLICY } from '../../shared/release-channel';
 
 const FLOWER_FRAGRANCE_URL = 'https://www.youtube.com/watch?v=-ZRrhoFBM4s';
 const FLOWER_FRAGRANCE_REFERENCE = 'https://www.kugeci.com/song/UnlUTXBC';
@@ -157,6 +158,7 @@ export function LyricsView({
 
   // Load saved API key from local storage
   useEffect(() => {
+    if (!RELEASE_POLICY.groqLyrics) return;
     try {
       chrome.storage?.local?.get?.(['groqApiKey'], (res) => {
         if (typeof res?.groqApiKey === 'string' && res.groqApiKey.trim()) {
@@ -906,7 +908,7 @@ export function LyricsView({
         </button>
       </section>
 
-      <details className="lyrics-ai-details">
+      {RELEASE_POLICY.groqLyrics ? <details className="lyrics-ai-details">
         <summary className="lyrics-ai-summary" style={{ padding: '8px 12px', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
           <Sparkles size={14} />
           <span>{t('aiTiming')} (選用實驗功能)</span>
@@ -979,7 +981,7 @@ export function LyricsView({
             {generating === 'file' ? t('aiGenerating') : t('generateWithAi')}
           </button>
         </section>
-      </details>
+      </details> : null}
 
       {notice ? <div className="lyrics-feedback is-success" role="status">{notice}</div> : null}
       {error ? <div className="lyrics-feedback is-error" role="alert">{error}</div> : null}

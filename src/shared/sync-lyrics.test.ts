@@ -11,7 +11,7 @@ function createLibrary(text = '準備唱下一句') {
     id: 'lyrics-1',
     trackUrl: 'https://www.youtube.com/watch?v=test123',
     title: '測試歌曲',
-    artist: '調唱 QA',
+    artist: 'Karaoke Kaiju QA',
     source: 'lrc',
     sourceLabel: 'test.lrc',
     now: 123,

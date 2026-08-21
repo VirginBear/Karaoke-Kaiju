@@ -248,7 +248,7 @@ YouTube 有固定 content script 權限，可穩定在導覽後恢復控制。�
 
 ### 決策
 
-Side Panel 使用型別化的本機字典支援繁體中文、英文、日文與簡體中文；Chrome manifest 另用標準 `_locales`。使用者選擇存在偏好設定中，切換後不需重載。產品名稱「調唱」在四種語言維持相同品牌字樣。
+Side Panel 使用型別化的本機字典支援繁體中文、英文、日文與簡體中文；Chrome manifest 另用標準 `_locales`。使用者選擇存在偏好設定中，切換後不需重載。產品名稱 `Karaoke Kaiju` 在四種語言維持相同品牌字樣。
 
 ### 理由與限制
 
@@ -282,7 +282,7 @@ Side Panel 使用型別化的本機字典支援繁體中文、英文、日文與
 
 ### 理由
 
-這能保留「調唱」乾淨的 Apple 式明暗視覺，也讓使用者清楚分辨現在可用與未來規劃的功能。
+這能保留 Karaoke Kaiju 乾淨的 Apple 式明暗視覺，也讓使用者清楚分辨現在可用與未來規劃的功能。
 
 ## ADR-016：歌詞採使用者匯入與明確同意的 BYOK AI 對時
 
@@ -423,5 +423,21 @@ AI 歌詞直接沿用使用者已啟動的 `tabCapture` MediaStream，在 offscr
 4. **宣告 `unlimitedStorage` 權限**：
    - 在 `manifest.json` 宣告 `unlimitedStorage`，徹底移除 10MB 本機儲存上限，支援儲存數萬首歌曲之完整動態歌詞與練習設定。
 
+## ADR-022：0.1.0 採單一程式碼、公開／開發雙建置
 
+### 決策
+
+以 `src/shared/release-channel.ts` 定義功能政策。`vite build` 預設產生 `public` 建置，只呈現並允許已完成公開驗收的核心練唱功能；`vite build --mode development` 產生 `development` 建置，供本機研究使用。
+
+公開建置除隱藏按鈕外，也在背景訊息入口拒絕研究指令，並由 Vite 產生 Manifest 時移除 OAuth、選用外部 API 與 Googlevideo 串流網域。開發建置才補回相應網域。
+
+### 理由
+
+- 測試者看到的功能、商店文案與權限必須完全一致。
+- 保留單一程式碼可避免長期維護兩份互相漂移的實作。
+- 功能政策的單元測試、Chrome E2E 與發布檢查可以阻止開發功能誤入正式包。
+
+### 分支
+
+`main` 是可公開交付版本，`develop` 是研究整合版本，發布候選使用短期 release 分支與 PR。任何開發建置產物都不得作為公開附件。
 

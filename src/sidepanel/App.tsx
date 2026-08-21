@@ -27,6 +27,7 @@ import { useRecentHistory } from './useRecentHistory';
 import { useTheme } from './useTheme';
 import { matchKeyboardShortcut } from '../shared/shortcuts';
 import { detectChineseVariant } from '../shared/chinese-convert';
+import { RELEASE_CHANNEL, RELEASE_POLICY } from '../shared/release-channel';
 
 export function App() {
   const preferenceApi = usePreferences();
@@ -155,7 +156,7 @@ function AppContent({ preferenceApi }: { preferenceApi: ReturnType<typeof usePre
   }, [lyrics.current, lyrics.loaded, media.available, setLyricsOverlay]);
 
   return (
-    <div className="app-shell" data-theme={theme} data-button-size={preferences.buttonSize} lang={preferences.locale}>
+    <div className="app-shell" data-theme={theme} data-button-size={preferences.buttonSize} data-release-channel={RELEASE_CHANNEL} lang={preferences.locale}>
       <HeaderStatus
         connected={media.available}
         processing={audio.status === 'active'}
@@ -212,10 +213,10 @@ function AppContent({ preferenceApi }: { preferenceApi: ReturnType<typeof usePre
                 {preferences.modules.key ? (
                   <KeyControl
                     semitones={audio.pitchSemitones}
-                    maxRange={preferences.keyRange}
+                    maxRange={RELEASE_POLICY.extendedKeyRange ? preferences.keyRange : Math.min(preferences.keyRange, 12) as 6 | 12}
                     disabled={!media.available || keyNeedsToolbarInvocation}
                     wheelControl={preferences.wheelControl}
-                    varispeed={preferences.varispeed}
+                    varispeed={RELEASE_POLICY.varispeed && preferences.varispeed}
                     onChange={(semitones) => void controller.setPitch(semitones, audio.pitchCents)}
                   />
                 ) : null}
@@ -263,7 +264,7 @@ function AppContent({ preferenceApi }: { preferenceApi: ReturnType<typeof usePre
                     onCancelSequence={() => void practiceSequence.cancelSequence()}
                   />
                 ) : null}
-                {preferences.modules.vocalReducer ? (
+                {RELEASE_POLICY.modules.includes('vocalReducer') && preferences.modules.vocalReducer ? (
                   <CollapsibleSection
                     id="vocalReducer"
                     title="人聲消除／伴奏提取"
@@ -286,7 +287,7 @@ function AppContent({ preferenceApi }: { preferenceApi: ReturnType<typeof usePre
                     />
                   </CollapsibleSection>
                 ) : null}
-                {preferences.modules.equalizer ? (
+                {RELEASE_POLICY.modules.includes('equalizer') && preferences.modules.equalizer ? (
                   <CollapsibleSection
                     id="equalizer"
                     title="3 段等化器 (EQ)"
@@ -309,7 +310,7 @@ function AppContent({ preferenceApi }: { preferenceApi: ReturnType<typeof usePre
                     />
                   </CollapsibleSection>
                 ) : null}
-                {preferences.modules.bpm ? (
+                {RELEASE_POLICY.modules.includes('bpm') && preferences.modules.bpm ? (
                   <CollapsibleSection
                     id="bpm"
                     title="BPM 節奏與節拍器"

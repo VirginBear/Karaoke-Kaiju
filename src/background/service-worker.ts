@@ -31,6 +31,7 @@ import {
   type PlaybackTrack,
   type SidePanelRequest,
 } from '../shared/protocol';
+import { RELEASE_POLICY } from '../shared/release-channel';
 
 const AUDIO_SESSION_KEY = 'audioSession';
 const AUDIO_QUALITY_KEY = 'audioQualityFormantStrength';
@@ -91,6 +92,7 @@ async function handleBackgroundMessage(
   }
 
   if (message.type === 'TAB_TRANSCRIPTION_RECORDING_READY') {
+    if (!RELEASE_POLICY.groqLyrics) return experimentalFeatureUnavailable();
     return runMediaCommandOnTab(message.tabId, { kind: 'SET_PLAYBACK', paused: false });
   }
 
@@ -109,20 +111,22 @@ async function handleBackgroundMessage(
     case 'STOP_AUDIO':
       return stopAudio();
     case 'ANALYZE_BPM':
-      return analyzeBpm(message.sampleSeconds);
+      return RELEASE_POLICY.modules.includes('bpm')
+        ? analyzeBpm(message.sampleSeconds)
+        : experimentalFeatureUnavailable();
     case 'SET_PITCH':
       return setPitch(message.semitones, message.cents);
     case 'SET_AUDIO_QUALITY':
       return setAudioQuality(message.formantStrength);
     case 'TRANSCRIBE_TAB_AUDIO':
-      return transcribeTabAudio(
+      return RELEASE_POLICY.groqLyrics ? transcribeTabAudio(
         message.apiKey,
         message.songContext,
         message.durationSeconds,
         message.qaDryRun,
-      );
+      ) : experimentalFeatureUnavailable();
     case 'CANCEL_TAB_TRANSCRIPTION':
-      return cancelTabTranscription();
+      return RELEASE_POLICY.groqLyrics ? cancelTabTranscription() : experimentalFeatureUnavailable();
     case 'MEDIA_COMMAND':
       return runMediaCommand(message.command);
     case 'PLAY_PLAYLIST_TRACK':
@@ -134,16 +138,26 @@ async function handleBackgroundMessage(
     case 'SKIP_PLAYLIST_TRACK':
       return skipPlaylistTrack(message.direction);
     case 'SET_VOCAL_REDUCTION':
-      return setVocalReduction(message.strength);
+      return RELEASE_POLICY.modules.includes('vocalReducer')
+        ? setVocalReduction(message.strength)
+        : experimentalFeatureUnavailable();
     case 'SET_VOCAL_MIX':
-      return setVocalMix(message.musicVolume, message.vocalVolume);
+      return RELEASE_POLICY.modules.includes('vocalReducer')
+        ? setVocalMix(message.musicVolume, message.vocalVolume)
+        : experimentalFeatureUnavailable();
     case 'SET_EQUALIZER':
-      return setEqualizer(message.low, message.mid, message.high);
+      return RELEASE_POLICY.modules.includes('equalizer')
+        ? setEqualizer(message.low, message.mid, message.high)
+        : experimentalFeatureUnavailable();
     case 'SET_VARISPEED':
-      return setVarispeed(message.enabled);
+      return RELEASE_POLICY.varispeed ? setVarispeed(message.enabled) : experimentalFeatureUnavailable();
     case 'OPEN_MEDIA_TAB':
       return openMediaTab();
   }
+}
+
+function experimentalFeatureUnavailable(): ExtensionResponse {
+  return { ok: false, error: '這項研究功能只在開發版本可用' };
 }
 
 async function getExtensionState(): Promise<ExtensionState> {
@@ -817,7 +831,7 @@ function getMediaStreamId(tabId: number): Promise<string> {
 async function requireActiveTab(): Promise<{ id: number; url: string }> {
   const tab = await getActiveTab();
   if (tab?.id === undefined || !isSupportedUrl(tab.url)) {
-    throw new Error('請先切到有音樂或影片的網頁，再開啟調唱');
+    throw new Error('請先切到有音樂或影片的網頁，再開啟 Karaoke Kaiju');
   }
 
   return { id: tab.id, url: tab.url ?? '' };

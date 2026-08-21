@@ -1,7 +1,7 @@
 {
-  "extensionName": { "message": "調唱｜唱歌練習" },
-  "extensionShortName": { "message": "調唱" },
-  "extensionDescription": { "message": "在 YouTube 與網頁媒體上自然升降 Key、調速、A–B 重複練習，並建立個人練唱歌單。" },
-  "actionTitle": { "message": "開啟調唱" },
-  "commandDescription": { "message": "開啟調唱側邊面板" }
+  "extensionName": { "message": "Karaoke Kaiju" },
+  "extensionShortName": { "message": "Kaiju" },
+  "extensionDescription": { "message": "在 YouTube 上升降 Key、調速、設定 A–B 循環、同步歌詞，並建立個人練唱歌單。" },
+  "actionTitle": { "message": "開啟 Karaoke Kaiju" },
+  "commandDescription": { "message": "開啟 Karaoke Kaiju 側邊面板" }
 }

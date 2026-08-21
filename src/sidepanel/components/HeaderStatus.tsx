@@ -34,6 +34,7 @@ export function HeaderStatus({
   return (
     <header className="app-header">
       <div className="brand-lockup">
+        <img src="/brand/karaoke-kaiju-app-icon.svg" alt="" aria-hidden="true" />
         <span>{t('appName')}</span>
       </div>
       <div className="header-actions">

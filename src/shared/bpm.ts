@@ -1,5 +1,5 @@
 /**
- * BPM & Tap Tempo utility for Diaochang
+ * BPM & Tap Tempo utility for Karaoke Kaiju
  */
 
 export class TapTempoCalculator {

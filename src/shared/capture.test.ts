@@ -8,7 +8,7 @@ describe('describeCaptureError', () => {
         'Extension has not been invoked for the current page (see activeTab permission). Chrome pages cannot be captured.',
       ),
     ).toBe(
-      '請在要練唱的 YouTube 分頁，點一次 Chrome 工具列或「擴充功能」拼圖選單中的「調唱」圖示來啟動音訊。',
+      '請在要練唱的 YouTube 分頁，點一次 Chrome 工具列或「擴充功能」拼圖選單中的「Karaoke Kaiju」圖示來啟動音訊。',
     );
   });
 

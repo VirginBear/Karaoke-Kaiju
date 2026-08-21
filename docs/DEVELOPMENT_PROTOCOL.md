@@ -1,6 +1,6 @@
-# 調唱統一開發流程
+# Karaoke Kaiju 統一開發流程
 
-- 文件版本：1.1
+- 文件版本：1.2
 - 生效日期：2026-08-21
 - 適用對象：人類工程師、Gemini、Codex 與其他協作 AI
 - 目的：建立「極簡 Token 消耗」與「先立檢驗標靶再撰寫程式碼」的標準化開發驗證紀律
@@ -123,11 +123,18 @@ pnpm run package
 ## 6. 版本與發布規則
 
 - 版本唯一來源是 `package.json`；`public/manifest.json`、設定頁、README、網站 badge 與發布文件必須同步。
+- `main` 只保存已通過公開驗收、可交付測試者的穩定版本；禁止直接在 `main` 開發或略過 PR。
+- `develop` 保存日常研究與整合進度；新功能分支由 `develop` 建立，完成自動驗收後回到 `develop`。
+- 發布時由 `develop` 建立 `codex/release-*` 或 `release/*` 候選分支，使用公開建置完成驗收，再以 PR 合併到 `main`。
+- 緊急修正由 `main` 建立 hotfix 分支；完成後除合併 `main`，也要同步回 `develop`，避免下一版復發。
+- `pnpm run build` 與 `pnpm run package` 固定產生公開版：隱藏並停用未驗收研究功能，不宣告其外部網域。
+- `pnpm run build:development` 才顯示研究功能；產出的 `dist/` 不得上傳商店、GitHub Release 或交付公開測試者。
 - 版本變更後必須重新執行 `pnpm run build` 與 `pnpm run package`。
 - ZIP 只能包含 `dist/` 的正式產物，不包含原始碼、文件、測試、`.map`、`.DS_Store`、Node modules 或秘密。
 - `release/` 的 ZIP 時間必須晚於最後一個原始碼變更。
 - 發布前至少保留一個可回復的舊 ZIP，但不得把舊版本誤標成最新版本。
 - 未決定正式託管位置前，網站只維持內容與離線預覽品質，不宣稱已上線或可下載。
+- API Key、模型、個人測試素材、舊版設計快照與未公開研究文件必須留在 `.gitignore` 保護的路徑；`scripts/release-check.mjs` 必須在 CI 再次檢查。
 
 ---
 

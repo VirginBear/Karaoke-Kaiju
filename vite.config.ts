@@ -8,14 +8,39 @@ const packageVersion = (JSON.parse(
   readFileSync(resolve(import.meta.dirname, 'package.json'), 'utf8'),
 ) as { version: string }).version;
 
-function googleDriveOAuthManifest(clientId: string | undefined): Plugin {
+type ReleaseChannel = 'public' | 'development';
+
+const EXPERIMENTAL_HOST_PERMISSIONS = [
+  'https://api.groq.com/*',
+  'https://www.googleapis.com/*',
+];
+const EXPERIMENTAL_STREAM_HOST_PERMISSION = 'https://*.googlevideo.com/*';
+
+function releaseManifest(
+  releaseChannel: ReleaseChannel,
+  clientId: string | undefined,
+): Plugin {
   return {
-    name: 'diaochang-google-drive-oauth-manifest',
+    name: 'karaoke-kaiju-release-manifest',
     apply: 'build',
     async closeBundle() {
       const manifestPath = resolve(import.meta.dirname, 'dist/manifest.json');
       const manifest = JSON.parse(await fileSystem.readFile(manifestPath, 'utf8')) as Record<string, unknown>;
-      const configured = configureGoogleDriveOAuth({ ...manifest, version: packageVersion }, clientId);
+      const baseManifest: Record<string, unknown> = { ...manifest, version: packageVersion };
+      if (releaseChannel === 'development') {
+        baseManifest.optional_host_permissions = EXPERIMENTAL_HOST_PERMISSIONS;
+        baseManifest.host_permissions = [
+          ...((baseManifest.host_permissions as string[] | undefined) ?? []),
+          EXPERIMENTAL_STREAM_HOST_PERMISSION,
+        ];
+      } else {
+        delete baseManifest.optional_host_permissions;
+        delete baseManifest.oauth2;
+      }
+      const configured = configureGoogleDriveOAuth(
+        baseManifest,
+        releaseChannel === 'development' ? clientId : undefined,
+      );
       await fileSystem.writeFile(
         manifestPath,
         `${JSON.stringify(configured.manifest, null, 2)}\n`,
@@ -27,9 +52,19 @@ function googleDriveOAuthManifest(clientId: string | undefined): Plugin {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, import.meta.dirname, 'DIAOCHANG_');
+  const releaseChannel: ReleaseChannel =
+    env.DIAOCHANG_RELEASE_CHANNEL === 'development' || mode === 'development'
+      ? 'development'
+      : 'public';
   return {
-    plugins: [react(), googleDriveOAuthManifest(env.DIAOCHANG_GOOGLE_OAUTH_CLIENT_ID)],
-    define: { __APP_VERSION__: JSON.stringify(packageVersion) },
+    plugins: [
+      react(),
+      releaseManifest(releaseChannel, env.DIAOCHANG_GOOGLE_OAUTH_CLIENT_ID),
+    ],
+    define: {
+      __APP_VERSION__: JSON.stringify(packageVersion),
+      __RELEASE_CHANNEL__: JSON.stringify(releaseChannel),
+    },
     build: {
       outDir: 'dist',
       emptyOutDir: true,

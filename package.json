@@ -1,17 +1,27 @@
 {
-  "name": "diaochang-karaoke-practice",
-  "version": "0.0.12",
+  "name": "karaoke-kaiju",
+  "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "repository": "https://github.com/VirginBear/Karaoke-Kaiju.git",
+  "homepage": "https://virginbear.github.io/Karaoke-Kaiju/",
+  "bugs": "https://github.com/VirginBear/Karaoke-Kaiju/issues",
+  "engines": {
+    "node": ">=22"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:development": "tsc -b && vite build --mode development",
     "typecheck": "tsc -b --pretty false",
     "test": "vitest run",
     "test:pitch": "node scripts/pitch-accuracy.mjs",
     "test:extension": "node scripts/extension-smoke.mjs",
-    "package": "tsc -b && vite build && node scripts/package-extension.mjs",
-    "check": "tsc -b --pretty false && vitest run && vite build && node scripts/pitch-accuracy.mjs && node scripts/extension-smoke.mjs"
+    "test:brand": "node scripts/brand-check.mjs",
+    "test:release": "node scripts/release-check.mjs",
+    "package": "tsc -b && vite build && node scripts/release-check.mjs && node scripts/package-extension.mjs",
+    "check": "tsc -b --pretty false && vitest run && vite build && node scripts/pitch-accuracy.mjs && node scripts/extension-smoke.mjs && node scripts/brand-check.mjs && node scripts/release-check.mjs"
   },
   "dependencies": {
     "@soundtouchjs/audio-worklet": "2.1.1",

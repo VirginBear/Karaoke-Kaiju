@@ -102,11 +102,20 @@ input:disabled {
 
 .brand-lockup {
   display: flex;
+  min-width: 0;
   align-items: center;
+  gap: 8px;
   color: var(--text);
-  font-size: 25px;
-  font-weight: 730;
-  letter-spacing: -0.045em;
+  font-size: 17px;
+  font-weight: 760;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+}
+
+.brand-lockup img {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
 }
 
 .header-actions {

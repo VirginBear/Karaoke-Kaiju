@@ -1,9 +1,9 @@
 # 產品需求與驗收規格
 
-- 文件版本：1.0（版本 0.0.11 基線）
+- 文件版本：1.2（版本 0.1.0 公開／開發分流基線）
 - 日期：2026-08-18
-- 目前階段：Phase 1–5B 的核心 UI、歌單、歌詞工作台與 KTV 覆蓋已交付；BPM 自動偵測已接上真實音訊分析；AI 人聲分離與正式跨裝置驗收仍在研究／驗證
-- 產品名稱：調唱（工作名稱）
+- 目前階段：Phase 1–5B 的核心 UI、歌單、歌詞工作台與 KTV 覆蓋已交付；0.1.0 公開版只開放已驗收核心功能，BPM、進階音訊與外部服務留在開發建置研究／驗證
+- 產品名稱：Karaoke Kaiju
 
 ## 1. 專案目的
 
@@ -133,7 +133,7 @@ Phase 0 通過後才開始正式產品開發。
 - 點歌改為更新目前練唱分頁，不再建立新分頁；Side Panel 與主要控制維持開啟。
 - 新頁媒體就緒後，自動套用該歌曲保存的 Key、cents、速度與 A–B preset。
 - 「依序播放」在歌曲 ended 後自動前往下一首；另提供「單曲循環」與上一首／下一首控制。
-- YouTube URL 儲存時移除 `list`／radio 參數，避免 YouTube 自有佇列與調唱歌單互相競爭。
+- YouTube URL 儲存時移除 `list`／radio 參數，避免 YouTube 自有佇列與 Karaoke Kaiju 歌單互相競爭。
 - Google 連動第一版使用 `chrome.storage.sync` 與目前 Chrome Sync 帳號；無需 OAuth client 或開發者伺服器。
 - 同步資料以 UTF-8 JSON、base64 與 7000 字元 chunks 儲存，符合每 item 約 8 KB 限制；介面顯示 100 KB 配額用量。
 - 未交付：拖曳排序、備註、JSON 匯出、超過 100 KB 後的 Drive `appDataFolder`、複雜離線衝突 UI。
