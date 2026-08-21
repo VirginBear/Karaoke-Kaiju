@@ -6,8 +6,8 @@
 
 | 平台 | 安裝同一份 ZIP | 核心 Key／Fine Pitch | Speed／A–B／歌詞／歌單 | 目前結論 |
 | --- | --- | --- | --- | --- |
-| macOS Google Chrome 116+ | 是 | 是 | 是 | 支援；已在 macOS ARM64、Chrome for Testing 152 完成自動驗收 |
-| Windows Google Chrome 116+ | 是 | 預期是 | 預期是 | GitHub Windows 自動驗收通過後列為支援；仍建議發布前做一次 Stable 實機安裝 |
+| macOS Google Chrome 116+ | 是 | 是 | 是 | 支援；macOS ARM64、Chrome for Testing 152 自動驗收通過 |
+| Windows Google Chrome 116+ | 是 | 是 | 是 | 支援；Windows x64、Chrome for Testing 152 自動驗收通過 |
 | iPadOS Orion Browser | 可嘗試安裝 | 否，尚無可驗證的分頁音訊擷取路徑 | 僅部分功能可能可移植 | 不列為 `0.1.0` 支援平台 |
 
 Windows 與 macOS 使用同一份 Manifest V3、JavaScript、WebAssembly 與發布 ZIP；程式沒有 OS 專用分支。最低 Chrome 116 是因為目前的音訊管線從 service worker 取得 `tabCapture` stream ID，再交給 offscreen document 處理。Chrome 官方也把這條 service worker → offscreen 擷取路徑標示為 Chrome 116 起可用：
@@ -35,6 +35,8 @@ pnpm run test:extension:cft
 - Chrome Sync 儲存可往返，console／background 錯誤為空。
 
 `.github/workflows/desktop-compatibility.yml` 會在 `macos-latest` 與 `windows-latest` 使用完全相同的命令。Chrome 137 起，Chrome 品牌正式版移除了自動化使用 `--load-extension` 載入未封裝擴充功能的能力，因此 CI 使用官方 Chrome for Testing；Google Chrome Stable 的最終安裝仍保留人工「載入未封裝項目」驗收。[Chromium 追蹤議題](https://issues.chromium.org/issues/422991756)
+
+2026-08-21 的 GitHub 驗收結果：Windows x64 與 macOS ARM64 都使用 Chrome for Testing `152.0.7977.54`，完整 smoke test 均為 `errors: []`；既有 Linux 標準發布檢查亦通過。這證明同一份公開建置可在兩個桌面作業系統運行；因自動化瀏覽器不等於使用者日常 Stable 安裝，正式商店發布前仍保留各一次人工聽感檢查。
 
 ## 為什麼 iPad Orion 目前不能共用完整功能
 

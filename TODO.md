@@ -4,7 +4,7 @@
 
 - [x] 建立同一份公開 `dist/` 在 macOS／Windows Chrome for Testing 執行的端到端驗收命令。
 - [x] macOS ARM64、Chrome for Testing stable 通過 Key、Speed、A–B、歌詞、歌單與同步 smoke test。
-- [ ] GitHub `windows-latest` 與 `macos-latest` 跨平台工作流程通過後，更新相容矩陣的 Windows 狀態。
+- [x] GitHub `windows-latest` 與 `macos-latest` 均以 Chrome for Testing 152 通過完整擴充功能 smoke test。
 - [ ] 在一台 Windows Google Chrome Stable 116+ 人工載入 `dist/`，完成 YouTube／YouTube Music 聽感與切歌測試。
 - [ ] 發布前在日常 macOS Google Chrome Stable 人工載入最終 ZIP，再跑一次公開版清單。
 - [ ] iPad Orion 加入 API feature detection；缺少 `sidePanel`／`tabCapture`／`offscreen` 時不得崩潰或顯示假啟動。
