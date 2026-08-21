@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>調唱 Diaochang — 專注於歌唱與音樂練習的 Chrome 側邊工作台</title>
+  <meta name="description" content="調唱 (Diaochang) 是一款為歌唱訓練與樂手練習打造的 Chrome 側邊工具。提供即時移調、變速、人聲降低、樂句循環、BPM 與動態歌詞；核心音訊本機處理，AI 歌詞外部服務採選用與明確同意。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="#" class="logo-group">
+        <div class="logo-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </div>
+        <span class="logo-text">調唱 <span class="logo-badge">v0.0.11</span></span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#features" data-i18n="nav_features">功能</a>
+        <a href="#platforms" data-i18n="nav_platforms">支援平台</a>
+        <a href="#philosophy" data-i18n="nav_philosophy">理念</a>
+        <a href="#shortcuts" data-i18n="nav_shortcuts">快捷鍵</a>
+        <a href="#support" data-i18n="nav_support">支援與問答</a>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" aria-label="切換主題 (Toggle Theme)" title="切換淺色/深色主題">
+          <svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <select id="lang-select" class="lang-picker" aria-label="Language Selector">
+          <option value="zh-TW">繁體中文</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+          <option value="es">Español</option>
+          <option value="de">Deutsch</option>
+          <option value="fr">Français</option>
+        </select>
+        <a href="https://chromewebstore.google.com" class="btn btn-primary btn-sm" target="_blank" rel="noreferrer" data-i18n="btn_install">取得擴充功能</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <div class="hero-badge" data-i18n="hero_badge">本機優先 · 個人測試版 · 零追蹤</div>
+        <h1 class="hero-title" data-i18n="hero_title">
+          在瀏覽器中，<br>
+          擁有專業級的練唱工作台。
+        </h1>
+        <p class="hero-subtitle" data-i18n="hero_subtitle">
+          調唱 (Diaochang) 是專為歌唱訓練與樂器練習設計的側邊欄工具。支援 ±36 半音精準移調、Varispeed 磁帶連動、人聲消減、多段樂句循環、BPM 測速與雙行動態歌詞。
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="https://chromewebstore.google.com" class="btn btn-primary btn-lg" target="_blank" rel="noreferrer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
+            <span data-i18n="btn_add_chrome">加到 Chrome 瀏覽器</span>
+          </a>
+          <a href="../docs/USER_MANUAL.md" class="btn btn-secondary btn-lg" target="_blank">
+            <span data-i18n="btn_manual">閱讀使用手冊</span>
+          </a>
+        </div>
+
+        <div class="hero-traits">
+          <span data-i18n="trait_dsp">即時音訊 DSP</span>
+          <span>·</span>
+          <span data-i18n="trait_local">本機優先運算</span>
+          <span>·</span>
+          <span data-i18n="trait_sync">Google 帳號同步</span>
+        </div>
+      </div>
+
+      <!-- macOS Window App Preview -->
+      <div class="macos-window" id="interactive-demo">
+        <div class="macos-titlebar">
+          <div class="traffic-lights">
+            <span class="traffic-dot dot-red"></span>
+            <span class="traffic-dot dot-yellow"></span>
+            <span class="traffic-dot dot-green"></span>
+          </div>
+          <div class="window-title">調唱 — Side Panel</div>
+        </div>
+
+        <div class="macos-body">
+          <!-- Active Track Header -->
+          <div class="track-header">
+            <div class="track-info">
+              <span class="status-indicator"></span>
+              <span class="track-name">晴天 — 周杰倫</span>
+            </div>
+            <span style="font-size: 11.5px; color: var(--apple-text-tertiary);">YouTube</span>
+          </div>
+
+          <!-- Transpose Control Card -->
+          <div class="macos-card">
+            <div class="card-title-row">
+              <span class="card-label" data-i18n="demo_transpose">移調控制 (KEY)</span>
+              <button type="button" class="card-action" id="btn-pitch-reset" data-i18n="demo_reset">重設</button>
+            </div>
+            <div class="pitch-stepper-row">
+              <button type="button" class="stepper-btn" id="btn-pitch-down" aria-label="降半音">−</button>
+              <div class="pitch-val" id="display-key">+0</div>
+              <button type="button" class="stepper-btn" id="btn-pitch-up" aria-label="升半音">+</button>
+            </div>
+            <div class="pitch-meta" id="display-cents">±0 cents (440.00 Hz)</div>
+          </div>
+
+          <!-- DSP Param Grid (Vocal & BPM) -->
+          <div class="param-grid">
+            <div class="param-box">
+              <div class="param-title" data-i18n="demo_vocal">人聲消減</div>
+              <div class="param-num" id="demo-vocal-val">85%</div>
+            </div>
+            <div class="param-box">
+              <div class="param-title" data-i18n="demo_bpm">節拍速度</div>
+              <div class="param-num" id="demo-bpm-val">102 BPM</div>
+            </div>
+          </div>
+
+          <!-- Dynamic Karaoke Lyrics Stage -->
+          <div class="lyrics-stage">
+            <div class="lyric-line">
+              <span class="lyric-base">故事的小黃花 從出生那年就飄著</span>
+              <span class="lyric-fill" id="karaoke-fill-1">故事的小黃花 從出生那年就飄著</span>
+            </div>
+            <div class="lyric-sub">童年的盪鞦韆 隨記憶一直晃到現在</div>
+          </div>
+
+          <!-- Playback & Speed Bar -->
+          <div class="speed-bar">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-demo-toggle">
+              <span id="demo-play-text" data-i18n="demo_pause">暫停</span>
+            </button>
+            <div class="segmented-control">
+              <button type="button" class="seg-btn" data-speed="0.75">0.75×</button>
+              <button type="button" class="seg-btn is-active" data-speed="1.0">1.0×</button>
+              <button type="button" class="seg-btn" data-speed="1.25">1.25×</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Platforms Section -->
+  <section class="platforms-section" id="platforms">
+    <div class="container">
+      <div class="section-lead">
+        <div class="section-label-apple" data-i18n="platforms_label">廣泛相容</div>
+        <h2 class="section-heading-apple" data-i18n="platforms_heading">在常用的音樂與影音網站中直接使用</h2>
+        <p class="section-desc-apple" data-i18n="platforms_desc">無須繁瑣匯入，開啟播放頁面即可自動連接控制</p>
+      </div>
+
+      <div class="platform-chips-row">
+        <div class="platform-tag">YouTube</div>
+        <div class="platform-tag">YouTube Music</div>
+        <div class="platform-tag">Spotify</div>
+        <div class="platform-tag">Apple Music</div>
+        <div class="platform-tag">SoundCloud</div>
+        <div class="platform-tag">Deezer</div>
+        <div class="platform-tag">Tidal</div>
+        <div class="platform-tag">Bilibili</div>
+        <div class="platform-tag">Vimeo</div>
+        <div class="platform-tag">本機音訊 (MP3 / WAV)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid Section -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-lead">
+        <div class="section-label-apple" data-i18n="feat_label">核心能力</div>
+        <h2 class="section-heading-apple" data-i18n="feat_heading">精心打造的音訊練習工具</h2>
+        <p class="section-desc-apple" data-i18n="feat_desc">結合專業 DSP 演算法與 macOS 風格的操作手感</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-tile">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+          </div>
+          <h3 class="tile-title" data-i18n="f1_t">±36 半音精準移調</h3>
+          <p class="tile-body" data-i18n="f1_d">嚴格遵循十二平均律標準，支援 ±6 至 ±36 半音微調，升降調與播放速度完全分離，男女轉換音域輕鬆自如。</p>
+        </div>
+
+        <div class="feature-tile">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <h3 class="tile-title" data-i18n="f2_t">Varispeed 磁帶連動</h3>
+          <p class="tile-body" data-i18n="f2_d">音高與速度以物理連動模式即時處理，避免額外時間拉伸；極端設定仍可能產生音質偽影。</p>
+        </div>
+
+        <div class="feature-tile">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+          </div>
+          <h3 class="tile-title" data-i18n="f3_t">Vocal Reducer 人聲消減</h3>
+          <p class="tile-body" data-i18n="f3_d">以中置聲道降低主唱人聲；效果依混音而異，並非完整 AI 分軌，仍可保留鼓與 Bass 的部分成分。</p>
+        </div>
+
+        <div class="feature-tile">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+          </div>
+          <h3 class="tile-title" data-i18n="f4_t">3 段等化器 (Equalizer)</h3>
+          <p class="tile-body" data-i18n="f4_d">低音 100Hz、中音 1kHz、高音 8kHz 獨立增益微調，內建人聲增強與重低音等多種實用預設。</p>
+        </div>
+
+        <div class="feature-tile">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+          </div>
+          <h3 class="tile-title" data-i18n="f5_t">多段 Loop 片段與循序練習</h3>
+          <p class="tile-body" data-i18n="f5_d">同一首歌可儲存多個命名循環片段（主歌、副歌、Solo），支援自訂階梯式提速訓練（0.75× → 0.90× → 1.0×）。</p>
+        </div>
+
+        <div class="feature-tile">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h3 class="tile-title" data-i18n="f6_t">BPM 測速與節拍器</h3>
+          <p class="tile-body" data-i18n="f6_d">提供音訊自動偵測、Tap Tempo 手動測速與 4/4 拍視覺脈衝燈號；自動結果仍可手動微調。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Philosophy & Free Section -->
+  <section class="philosophy-section" id="philosophy">
+    <div class="container">
+      <div class="philosophy-card">
+        <h2 class="philosophy-title" data-i18n="phil_t">純粹、專注，為音樂人而生。</h2>
+        <p class="philosophy-text" data-i18n="phil_d">
+          我們相信好工具應該是順手、安靜且尊重使用者。「調唱」目前維持個人測試版、不放橫幅廣告；核心音訊在瀏覽器本機處理，AI 歌詞只有在你主動同意後才會送往 Groq。
+        </p>
+
+        <div class="spec-list">
+          <div class="spec-item">
+            <strong data-i18n="spec1_t">本機優先</strong>
+            <span data-i18n="spec1_d">移調、變速與 BPM 透過 Web Audio 在瀏覽器處理；AI 歌詞是明確同意後的選用外部服務。</span>
+          </div>
+          <div class="spec-item">
+            <strong data-i18n="spec2_t">零廣告與追蹤</strong>
+            <span data-i18n="spec2_d">沒有追蹤代碼與干擾廣告，提供純粹沉浸的練唱體驗。</span>
+          </div>
+          <div class="spec-item">
+            <strong data-i18n="spec3_t">目前個人測試版</strong>
+            <span data-i18n="spec3_d">目前不設定付費牆；正式發布與服務條件尚未決定。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shortcuts Section -->
+  <section class="shortcuts-section" id="shortcuts">
+    <div class="container">
+      <div class="section-lead">
+        <div class="section-label-apple" data-i18n="short_label">鍵盤操作</div>
+        <h2 class="section-heading-apple" data-i18n="short_heading">防衝突快捷鍵設計</h2>
+        <p class="section-desc-apple" data-i18n="short_desc">專門避開 YouTube 原生熱鍵，輸入文字時自動暫停觸發</p>
+      </div>
+
+      <div class="shortcuts-grid">
+        <div class="shortcut-item">
+          <span class="shortcut-label" data-i18n="sk_pitch">升降半音 (±1 Key)</span>
+          <div class="key-badge-group"><kbd>[</kbd> / <kbd>]</kbd></div>
+        </div>
+        <div class="shortcut-item">
+          <span class="shortcut-label" data-i18n="sk_reset">重設原調 (Reset Key)</span>
+          <div class="key-badge-group"><kbd>\</kbd></div>
+        </div>
+        <div class="shortcut-item">
+          <span class="shortcut-label" data-i18n="sk_fine">音高微調 (±5 Cents)</span>
+          <div class="key-badge-group"><kbd>Alt</kbd> + <kbd>[</kbd> / <kbd>]</kbd></div>
+        </div>
+        <div class="shortcut-item">
+          <span class="shortcut-label" data-i18n="sk_ab">標記 A–B 樂句循環點</span>
+          <div class="key-badge-group"><kbd>Alt</kbd> + <kbd>A</kbd> / <kbd>B</kbd></div>
+        </div>
+        <div class="shortcut-item">
+          <span class="shortcut-label" data-i18n="sk_loop">開啟 / 清除循環段落</span>
+          <div class="key-badge-group"><kbd>Alt</kbd> + <kbd>L</kbd> / <kbd>C</kbd></div>
+        </div>
+        <div class="shortcut-item">
+          <span class="shortcut-label" data-i18n="sk_speed">微調播放速度 (±0.05×)</span>
+          <div class="key-badge-group"><kbd>Alt</kbd> + <kbd>-</kbd> / <kbd>=</kbd></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Support & FAQ Section -->
+  <section class="support-section" id="support">
+    <div class="container">
+      <div class="section-lead">
+        <div class="section-label-apple" data-i18n="faq_label">常見問題</div>
+        <h2 class="section-heading-apple" data-i18n="faq_heading">支援中心與使用指南</h2>
+        <p class="section-desc-apple" data-i18n="faq_desc">快速搜尋或選擇分類查看詳細解答</p>
+      </div>
+
+      <div class="search-container">
+        <input type="text" id="faq-search-input" class="apple-search-input" placeholder="搜尋問題（例如：no media, key, loop, bpm, vocal...）" />
+      </div>
+
+      <div class="filter-pills">
+        <button type="button" class="pill-filter is-active" data-filter="all">全部</button>
+        <button type="button" class="pill-filter" data-filter="getting-started">快速入門</button>
+        <button type="button" class="pill-filter" data-filter="no-media">媒體偵測</button>
+        <button type="button" class="pill-filter" data-filter="loop">Loop 片段</button>
+        <button type="button" class="pill-filter" data-filter="vocal">人聲消除</button>
+        <button type="button" class="pill-filter" data-filter="bpm">BPM 測速</button>
+      </div>
+
+      <div class="faq-container" id="faq-list">
+        <details class="faq-disclosure" data-category="getting-started" open>
+          <summary class="faq-summary">如何開始使用「調唱」？需要註冊帳號嗎？</summary>
+          <div class="faq-content">
+            完全不需要註冊。在 Chrome 擴充功能商店安裝後，開啟任何 YouTube 或 Spotify 分頁，點擊工具列圖示開啟側邊欄，即可即時移調、變速或提取伴奏。
+          </div>
+        </details>
+
+        <details class="faq-disclosure" data-category="no-media">
+          <summary class="faq-summary">面板顯示「尚未找到可播放的歌曲」該如何排除？</summary>
+          <div class="faq-content">
+            請確認當前分頁的影片或音樂已按下播放（瀏覽器需要在媒體輸出時才能獲取音訊串流），隨後點擊面板上的「重新偵測」即可。若為本機檔案，可直接點擊「播放本機檔案」開啟 MP3/WAV。
+          </div>
+        </details>
+
+        <details class="faq-disclosure" data-category="loop">
+          <summary class="faq-summary">如何儲存與管理多個 A-B 循環片段？</summary>
+          <div class="faq-content">
+            在播放時點擊「設 A」標記起點、「設 B」標記終點，接著點選「存為片段」並命名。同一首歌可儲存多個片段，點擊清單中的任一片段即可秒速跳轉並啟用該循環。
+          </div>
+        </details>
+
+        <details class="faq-disclosure" data-category="vocal">
+          <summary class="faq-summary">Vocal Reducer 人聲消減的運作原理？</summary>
+          <div class="faq-content">
+            調唱採用 Web Audio 的中置／側邊訊號處理降低常見的置中人聲；效果依歌曲混音而異，並非完整 AI 分軌，也不保證完全保留 Bass 或鼓。
+          </div>
+        </details>
+
+        <details class="faq-disclosure" data-category="bpm">
+          <summary class="faq-summary">如何使用 BPM 測速與節拍器？</summary>
+          <div class="faq-content">
+            跟著歌曲拍點連續點擊「TAP 測速」按鈕，或播放節奏清楚的段落使用「自動偵測」。結果可再手動微調；4/4 拍視覺脈衝燈與節拍聲可作為練唱輔助。
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="logo-group">
+          <div class="logo-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <span class="logo-text">調唱 Diaochang</span>
+        </div>
+        <div class="footer-nav">
+          <a href="../docs/USER_MANUAL.md" target="_blank">使用手冊</a>
+          <a href="../docs/PRIVACY_POLICY.md" target="_blank">隱私權政策</a>
+          <a href="https://github.com/your-repo" target="_blank">GitHub</a>
+        </div>
+      </div>
+      <div class="footer-legal">
+        © 2026 Diaochang Project. Local-first audio tools for macOS & Chrome. MIT License.
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "extensionName": { "message": "调唱｜唱歌练习" },
+  "extensionShortName": { "message": "调唱" },
+  "extensionDescription": { "message": "在 YouTube 与网页媒体上自然升降 Key、调速、A–B 重复练习，并建立个人练唱歌单。" },
+  "actionTitle": { "message": "打开调唱" },
+  "commandDescription": { "message": "打开调唱侧边面板" }
+}

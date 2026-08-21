@@ -1,0 +1,71 @@
+{
+  "manifest_version": 3,
+  "name": "__MSG_extensionName__",
+  "short_name": "__MSG_extensionShortName__",
+  "version": "0.0.11",
+  "default_locale": "zh_TW",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAprxH4EON3Kt/oi/clx5EGchvk9qdMx6QFfhFl1DjR7dm8JatljA5/3SaFB8X546cgcz4RnB/wVnhM4FL7qgG8WhrlztwHhzKsEvYLyZ6nrUZRj6Y6VBX0Y978y1JiLccfRyosnGlT08UjGpc9gHQb+Xbc9c1sdMZn77ZYwOMU8lBRnXG5wZRxePYaYlFfQpben4JUWJTJIXeFXm/HEbhhOo+U4MnXYtzqE/wv1mHtVUrtFgED+aUxmwQoCxrBrhYLYfBwkmVAsZSLjPeRYsyO1/AVrn2+fbczS/BkihkZS5/h9549t/i2K9gBCkOQ1vC6dqSqh+tufUHWk6J3qlq/QIDAQAB",
+  "description": "__MSG_extensionDescription__",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "activeTab",
+    "identity",
+    "identity.email",
+    "offscreen",
+    "scripting",
+    "sidePanel",
+    "storage",
+    "tabCapture",
+    "unlimitedStorage"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://music.youtube.com/*",
+    "https://m.youtube.com/*",
+    "https://*.googlevideo.com/*"
+  ],
+  "optional_host_permissions": [
+    "https://api.groq.com/*"
+  ],
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "__MSG_actionTitle__"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+K",
+        "mac": "Alt+Shift+K"
+      },
+      "description": "__MSG_commandDescription__"
+    }
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://music.youtube.com/*",
+        "https://m.youtube.com/*"
+      ],
+      "js": [
+        "media-controller.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+  }
+}

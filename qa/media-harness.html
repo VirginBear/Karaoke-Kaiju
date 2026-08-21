@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:," />
+    <title>調唱 440 Hz 測試音</title>
+    <style>
+      body {
+        display: grid;
+        min-height: 100vh;
+        margin: 0;
+        place-items: center;
+        color: #f5f7fb;
+        background: #07101d;
+        font: 16px system-ui, sans-serif;
+      }
+      main {
+        width: min(560px, calc(100% - 48px));
+      }
+      audio {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>440 Hz 測試音</h1>
+      <p>供調唱 Phase 0 的 Key、速度與 A–B 自動測試使用。</p>
+      <audio controls src="/qa/tone-440.wav"></audio>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "name": "diaochang-karaoke-practice",
+  "version": "0.0.11",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b --pretty false",
+    "test": "vitest run",
+    "test:pitch": "node scripts/pitch-accuracy.mjs",
+    "test:extension": "node scripts/extension-smoke.mjs",
+    "package": "tsc -b && vite build && node scripts/package-extension.mjs",
+    "check": "tsc -b --pretty false && vitest run && vite build && node scripts/pitch-accuracy.mjs && node scripts/extension-smoke.mjs"
+  },
+  "dependencies": {
+    "@soundtouchjs/audio-worklet": "2.1.1",
+    "@soundtouchjs/formant-correction-worklet": "2.1.1",
+    "lucide-react": "1.31.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/chrome": "0.1.6",
+    "@types/node": "26.2.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.5",
+    "playwright": "1.62.1",
+    "typescript": "7.0.2",
+    "vite": "8.2.1",
+    "vitest": "4.1.0"
+  },
+  "packageManager": "pnpm@11.19.0"
+}

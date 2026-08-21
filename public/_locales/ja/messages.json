@@ -1,0 +1,7 @@
+{
+  "extensionName": { "message": "調唱｜歌の練習" },
+  "extensionShortName": { "message": "調唱" },
+  "extensionDescription": { "message": "YouTube とウェブメディアで Key 変更、速度調整、A–B リピート、練習プレイリストを利用できます。" },
+  "actionTitle": { "message": "調唱を開く" },
+  "commandDescription": { "message": "調唱サイドパネルを開く" }
+}

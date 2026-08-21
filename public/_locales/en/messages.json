@@ -1,0 +1,7 @@
+{
+  "extensionName": { "message": "調唱 | Singing Practice" },
+  "extensionShortName": { "message": "調唱" },
+  "extensionDescription": { "message": "Transpose Key, change speed, loop A–B sections, and organize singing practice playlists on YouTube and web media." },
+  "actionTitle": { "message": "Open 調唱" },
+  "commandDescription": { "message": "Open the 調唱 side panel" }
+}
