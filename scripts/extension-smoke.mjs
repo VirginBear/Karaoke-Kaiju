@@ -130,12 +130,53 @@ try {
 
   const controllerPage = await context.newPage();
   await controllerPage.goto(`chrome-extension://${extensionId}/sidepanel.html`);
+  await controllerPage.locator('.app-shell').waitFor({ state: 'visible', timeout: 15_000 });
 
-  const sendMessage = (message) =>
-    controllerPage.evaluate(
-      (payload) => chrome.runtime.sendMessage(payload),
-      message,
-    );
+  const publicUiSummary = await controllerPage.evaluate(() => ({
+    releaseChannel: document.querySelector('.app-shell')?.getAttribute('data-release-channel'),
+    practiceText: document.querySelector('.practice-view')?.textContent ?? '',
+    optionalHostPermissions: chrome.runtime.getManifest().optional_host_permissions ?? [],
+    oauthConfigured: Boolean(chrome.runtime.getManifest().oauth2),
+  }));
+  await controllerPage.locator('.app-header .header-icon-button').click();
+  publicUiSummary.settingsText = await controllerPage.locator('.settings-view').innerText();
+  publicUiSummary.keyRangeOptions = await controllerPage.locator('select[aria-label="Key 範圍"] option').allTextContents();
+  await controllerPage.locator('.app-header--detail .header-icon-button').click();
+  await controllerPage.locator('.bottom-nav button').nth(3).click();
+  publicUiSummary.lyricsText = await controllerPage.locator('.lyrics-view').innerText();
+  await controllerPage.locator('.bottom-nav button').nth(0).click();
+
+  const hiddenPublicLabels = [
+    'BPM 節奏與節拍器',
+    '人聲消除／伴奏提取',
+    '3 段等化器',
+    'Google Drive 大容量同步',
+    'AI 產生動態時間碼',
+    'Varispeed',
+  ];
+  publicUiSummary.visibleExperimentalLabels = hiddenPublicLabels.filter((label) =>
+    `${publicUiSummary.practiceText}\n${publicUiSummary.settingsText}\n${publicUiSummary.lyricsText}`.includes(label),
+  );
+
+  const controllerUrl = `chrome-extension://${extensionId}/sidepanel.html`;
+  const sendMessage = async (message) => {
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        if (!controllerPage.url().startsWith(`chrome-extension://${extensionId}/`)) {
+          await controllerPage.goto(controllerUrl);
+        }
+        return await controllerPage.evaluate(
+          (payload) => chrome.runtime.sendMessage(payload),
+          message,
+        );
+      } catch (error) {
+        if (attempt > 0 || !String(error).includes('Execution context was destroyed')) throw error;
+        await controllerPage.waitForTimeout(150);
+        await controllerPage.goto(controllerUrl);
+      }
+    }
+    throw new Error('Unable to send extension message');
+  };
 
   const syncCapability = await controllerPage.evaluate(async () => {
     const profile = await chrome.identity.getProfileUserInfo({ accountStatus: 'ANY' });
@@ -203,6 +244,27 @@ try {
     });
   }
 
+  const publicExperimentalCommandResponses = isLocalSmoke ? {
+    vocalMix: await sendMessage({
+      target: 'background',
+      type: 'SET_VOCAL_MIX',
+      musicVolume: 0.8,
+      vocalVolume: 0.2,
+    }),
+    equalizer: await sendMessage({
+      target: 'background',
+      type: 'SET_EQUALIZER',
+      low: 2,
+      mid: -2,
+      high: 1,
+    }),
+    varispeed: await sendMessage({
+      target: 'background',
+      type: 'SET_VARISPEED',
+      enabled: true,
+    }),
+  } : null;
+
   const standardQualityResponse = await sendMessage({
     target: 'background',
     type: 'SET_AUDIO_QUALITY',
@@ -263,7 +325,7 @@ try {
     command: {
       kind: 'SET_LYRICS_OVERLAY',
       lyrics: {
-        title: '調唱歌詞測試',
+        title: 'Karaoke Kaiju 歌詞測試',
         visible: true,
         offsetMs: 0,
         fontScale: 1.2,
@@ -299,7 +361,7 @@ try {
       target: 'background',
       type: 'TRANSCRIBE_TAB_AUDIO',
       apiKey: 'qa-ephemeral-only',
-      songContext: '調唱 QA - 目前分頁測試',
+      songContext: 'Karaoke Kaiju QA - 目前分頁測試',
       durationSeconds: 2,
       qaDryRun: true,
     });
@@ -334,7 +396,7 @@ try {
                     id: 'track-1',
                     url: firstUrl,
                     title: '測試歌曲一',
-                    artist: '調唱 QA',
+                    artist: 'Karaoke Kaiju QA',
                     platform: '網頁媒體',
                     duration: 20,
                     addedAt: updatedAt,
@@ -351,7 +413,7 @@ try {
                     id: 'track-2',
                     url: secondUrl,
                     title: '測試歌曲二',
-                    artist: '調唱 QA',
+                    artist: 'Karaoke Kaiju QA',
                     platform: '網頁媒體',
                     duration: 20,
                     addedAt: updatedAt,
@@ -510,6 +572,7 @@ try {
   const result = {
     extensionId,
     smokeUrl,
+    publicUiSummary,
     syncCapability,
     tabSnapshot,
     coldDetectionStateResponse,
@@ -520,6 +583,7 @@ try {
     autoStartStopResponse,
     startResponse,
     bpmAnalysisResponse,
+    publicExperimentalCommandResponses,
     standardQualityResponse,
     naturalQualityResponse,
     pitchResponse,
@@ -544,6 +608,11 @@ try {
 
   if (
     !coldDetectionStateResponse?.ok ||
+    publicUiSummary.releaseChannel !== 'public' ||
+    publicUiSummary.optionalHostPermissions.length !== 0 ||
+    publicUiSummary.oauthConfigured !== false ||
+    publicUiSummary.visibleExperimentalLabels.length !== 0 ||
+    publicUiSummary.keyRangeOptions.join(',') !== '±6,±12' ||
     syncCapability.roundTrip !== true ||
     coldDetectionStateResponse.data?.media?.available !== true ||
     coldDetectionStateResponse.data?.mediaError !== null ||
@@ -554,7 +623,10 @@ try {
     autoStartStateResponse.data?.audio?.pitchSemitones !== 1 ||
     !autoStartStopResponse?.ok ||
     !startResponse?.ok ||
-    (isLocalSmoke && (bpmAnalysisResponse?.ok !== false || !String(bpmAnalysisResponse?.error ?? '').includes('節奏'))) ||
+    (isLocalSmoke && (bpmAnalysisResponse?.ok !== false || !String(bpmAnalysisResponse?.error ?? '').includes('開發版本'))) ||
+    (publicExperimentalCommandResponses !== null && Object.values(publicExperimentalCommandResponses).some(
+      (response) => response?.ok !== false || !String(response?.error ?? '').includes('開發版本'),
+    )) ||
     !standardQualityResponse?.ok ||
     !naturalQualityResponse?.ok ||
     !pitchResponse?.ok ||
@@ -578,9 +650,8 @@ try {
     lyricsOverlayState.panelOpacity !== '0.66' ||
     !lyricsOverlayState.texts.some((text) => text?.includes('準備唱下一句')) ||
     (isLocalSmoke &&
-      (!tabTranscriptionResponse?.ok ||
-        !tabTranscriptionResponse.data?.text?.startsWith('qa-capture-') ||
-        Number(tabTranscriptionResponse.data?.text?.replace('qa-capture-', '')) < 1_000 ||
+      (tabTranscriptionResponse?.ok !== false ||
+        !String(tabTranscriptionResponse?.error ?? '').includes('開發版本') ||
         tabTranscriptionRestoreState?.data?.audio?.status !== 'active' ||
         Math.abs(tabTranscriptionRestoreState?.data?.media?.playbackRate - 0.75) > 0.001 ||
         tabTranscriptionRestoreState?.data?.media?.loop?.enabled !== true)) ||

@@ -643,3 +643,24 @@
 - 驗證結果：基準版本 `package.json` 與 `public/manifest.json` 均為 0.0.12；16 個測試檔、61 個測試、正式建置、DSP 音高與 extension smoke `errors: []` 全部通過。概念圖已保存到專案供其他協作者共用。
 - 未完成／風險：目前是概念提案，尚未更換正式名稱或圖示。生成的角色輪廓包含漸層與非透明背景，只能當造型參考，不得直接進正式包；正式 SVG 與 16 px 專用版本需在名稱獲確認後重畫。名稱查核不是商標法律意見。
 - 下一步：取得 `Karaoke Kaiju` 名稱與概念方向確認後，先建立小尺寸圖示快照驗收，再同步實作擴充功能與官網品牌。
+
+## 2026-08-21 — 0.0.13 Karaoke Kaiju 品牌、圖示與官網正式套用
+
+- 任務：依使用者確認的 `Karaoke Kaiju` 名稱與「只有一小格怪獸頭像，不是整隻龍」方向，將擴充功能、四語介面、官網、文件與發布包改為同一品牌。
+- 先立驗收標靶：新增 `scripts/brand-check.mjs`，先於實作前定義版本、四語品牌字串、SVG 配色／無漸層、PNG 尺寸，官網首屏、上架狀態揭露與公開文件的可執行斷言；實作前預期 FAIL，完成後 PASS。
+- 正式資產：用簡化 SVG 重畫 `public/brand/karaoke-kaiju-app-icon.svg` 與 `karaoke-kaiju-mark.svg`，輸出 RGBA 16／32／48／128 px PNG。方形圖示只保留深墨怪獸頭、白色輪廓與藍色麥克風，在 16 px 仍可辨識。
+- 擴充功能：Manifest 與 `package.json` 升為 0.0.13；繁中、English、日本語、簡中的名稱固定為 `Karaoke Kaiju`，short name 為 `Kaiju`；Side Panel Header 改為 28 px 方形頭像與品牌名。為保留已有個人資料，`diaochang://` 分享格式、storage key、Drive 隱藏檔名與 DOM id 只作為內部相容識別碼保留。
+- 官網：依採用概念稿實作品牌 Header、Hero 互動面板、練唱流程、功能進度、創作初衷、AI／隱私與 CTA；支援四語、亮暗主題、系統字體，且不顯示尚未上架的商店安裝連結。
+- 視覺驗收：實際瀏覽器在官網 `1536×1024`、`390×844` 與 Side Panel `420×900` 檢查；修正手機版裝飾怪獸造成的 126 px 水平溢出後，三個尺寸的 `scrollWidth === clientWidth`。實測 Key `+2 → +4 → 0`、速度重設、A–B 開關、日文切換與暗色主題，console warning/error 為空。
+- 驗證：`pnpm run check` 通過（16 個測試檔、61 個測試、正式建置、DSP 音高最大誤差約 1.51 cents、extension smoke `errors: []`、品牌斷言 PASS）。`pnpm run package` 產出 `release/karaoke-kaiju-v0.0.13.zip` 191.8 KB，SHA-256 `d994fa3932d3dc886b244df9f39fe9866d9cd2f5442dee50f2d40e449cba2616`；原始碼與發布包 secret scan 無 Groq／Google API Key。
+- 未完成／風險：品牌名稱仍需在正式上架前做主要市場商標檢索；Chrome Web Store 尚未發布，Google Drive 真實 OAuth 與本機 AI 人聲分離仍照既定 TODO 進行。
+
+## 2026-08-21 — 0.1.0 公開測試版發布候選
+
+- 任務：把既有開發成果整理成可公開測試的 `0.1.0`，將尚未完成驗收的 AI BPM、Groq 歌詞對時、進階人聲分離、EQ、Varispeed 與 Google Drive 同步留在開發版本，並嚴格稽核版本庫、權限、網站宣稱、套件內容與敏感資料。
+- 先立驗收標靶：`package.json`、來源 manifest、正式建置 manifest 必須同為 `0.1.0`；公開 UI 不得顯示研究模組；背景命令不得繞過 UI 啟動研究模組；公開 manifest 不得包含 Groq／Google API optional host、Drive OAuth 或 Google Video capture 權限；來源與發布包不得含 API Key／私人檔案；核心 Key、Fine Pitch、Speed、A–B、歌詞匯入與同分頁歌單流程仍須通過端到端測試。
+- 版本分流：新增 `src/shared/release-channel.ts`。`pnpm run build` 固定輸出公開版，`pnpm run build:development` 才開啟 BPM、Vocal Reducer、EQ、Groq 歌詞、Google Drive 與 Varispeed 等研究能力；公開版背景層會直接拒絕相關命令，而非只用 CSS 隱藏。
+- 公開內容：完成 MIT `LICENSE`、`THIRD_PARTY_NOTICES.txt`、四語公開手冊／隱私政策、Chrome Web Store 指南、GitHub Actions CI、發布稽核報告與官網 0.1.0 文案。移除版本控制中約 13 MB、正式產品不會使用的概念圖與實作截圖；檔案仍保留在本機並由 `.gitignore` 排除。
+- 驗證：`pnpm run check` 通過（17 個測試檔、63 個測試、正式建置、DSP 音高最大誤差約 1.51 cents、Chrome extension smoke `errors: []`、品牌與公開發布規則 PASS）；`pnpm run package` 產出 `release/karaoke-kaiju-v0.1.0.zip` 197,421 bytes（約 192.8 KB），SHA-256 `d64d2ec102790b4064121667969037adeec06fce79ba57caae3f9cfa07b51bd6`。
+- 視覺驗收：官網在 `1440×900` 與 `390×844` 實測亮／暗主題、繁中／日文切換、Key `0 → +4 → 0`、速度與 A–B 重設；桌面與手機版均無水平溢出，console error／warning 為空。
+- 風險／下一步：公開版尚未接入真實 Google OAuth，也不承諾 AI 分離或 AI 對時品質。研究功能繼續在 `develop`／development build 驗證，只有達到可重跑、可量化且權限與隱私均通過的發布門檻後，才逐項進入下一個公開版本。

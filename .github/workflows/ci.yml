@@ -1,0 +1,50 @@
+name: Validate Extension
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run standardized verification
+        run: xvfb-run -a pnpm run check
+
+      - name: Package public beta
+        run: pnpm run package
+
+      - name: Upload verified extension package
+        uses: actions/upload-artifact@v4
+        with:
+          name: karaoke-kaiju-${{ github.sha }}
+          path: release/karaoke-kaiju-v*.zip
+          if-no-files-found: error
+          retention-days: 14

@@ -4,7 +4,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const websiteDir = path.resolve('website');
-const artifactDir = '/Users/bear/.gemini/antigravity/brain/8e756023-a18a-4176-97f6-2b0f75197dac';
+const artifactDir = path.resolve(
+  process.env.KARAOKE_KAIJU_ARTIFACT_DIR ?? 'artifacts/website',
+);
+fs.mkdirSync(artifactDir, { recursive: true });
 
 // Simple static server
 const server = http.createServer((req, res) => {
@@ -34,7 +37,7 @@ server.listen(0, async () => {
 
   // 1. Capture Light Mode
   await page.goto(`http://localhost:${port}/index.html`, { waitUntil: 'networkidle' });
-  await page.evaluate(() => localStorage.setItem('diaochang_theme', 'light'));
+  await page.evaluate(() => localStorage.setItem('karaoke_kaiju_theme', 'light'));
   await page.reload({ waitUntil: 'networkidle' });
 
   await page.screenshot({ path: path.join(artifactDir, 'website_light_hero.png'), fullPage: false });

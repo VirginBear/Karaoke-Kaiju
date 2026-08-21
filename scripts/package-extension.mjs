@@ -14,7 +14,7 @@ if (!existsSync(manifestPath)) {
 
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
 const version = manifest.version || '0.0.1';
-const zipFileName = `diaochang-v${version}.zip`;
+const zipFileName = `karaoke-kaiju-v${version}.zip`;
 const zipFilePath = join(releaseDir, zipFileName);
 
 if (!existsSync(releaseDir)) {
@@ -26,7 +26,7 @@ if (existsSync(zipFilePath)) {
   unlinkSync(zipFilePath);
 }
 
-console.log(`📦 Packaging Diaochang Chrome Extension v${version} (Clean & Optimized)...`);
+console.log(`📦 Packaging Karaoke Kaiju Chrome Extension v${version} (Clean & Optimized)...`);
 
 try {
   // Exclude sourcemaps, OS files, and test files for production Web Store packaging

@@ -50,7 +50,7 @@ if (!isExtensionRuntime()) {
       audio: {
         ...EMPTY_AUDIO_SESSION,
         status: 'error',
-        error: '請在要練唱的 YouTube 分頁，點一次 Chrome 工具列或「擴充功能」拼圖選單中的「調唱」圖示來啟動音訊。',
+        error: '請在要練唱的 YouTube 分頁，點一次 Chrome 工具列或「擴充功能」拼圖選單中的「Karaoke Kaiju」圖示來啟動音訊。',
       },
       media: previewMedia,
       mediaError: null,
@@ -82,7 +82,7 @@ if (!isExtensionRuntime()) {
       media: {
         ...previewMedia,
         title: 'BPM 自動偵測預覽',
-        artist: 'Diaochang QA',
+        artist: 'Karaoke Kaiju QA',
       },
       mediaError: null,
       queue: EMPTY_PLAYBACK_QUEUE,

@@ -1,4 +1,4 @@
-# 調唱專案協作規範
+# Karaoke Kaiju 專案協作規範
 
 所有工程師與 AI 協作者都必須遵循 [docs/DEVELOPMENT_PROTOCOL.md](docs/DEVELOPMENT_PROTOCOL.md)。
 

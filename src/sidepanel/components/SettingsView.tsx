@@ -24,6 +24,7 @@ import type { PlaylistSyncState } from '../usePlaylistLibrary';
 import type { GoogleDriveSyncState } from '../useGoogleDriveSync';
 import type { AppPreferences, ButtonSize, PracticeModule } from '../usePreferences';
 import type { AppTheme } from './HeaderStatus';
+import { RELEASE_POLICY } from '../../shared/release-channel';
 
 interface SettingsViewProps {
   theme: AppTheme;
@@ -68,6 +69,7 @@ export function SettingsView({
   return (
     <main className="settings-view">
       <SettingsSection title={t('settingsAccountSync')}>
+        {RELEASE_POLICY.googleDrive ? (
         <details className="settings-disclosure" open>
           <summary className="settings-row">
             <span className="settings-leading-icon settings-leading-icon--drive"><HardDrive size={19} /></span>
@@ -106,6 +108,7 @@ export function SettingsView({
             </button>
           </div>
         </details>
+        ) : null}
         <details className="settings-disclosure">
           <summary className="settings-row">
             <span className="settings-leading-icon settings-leading-icon--drive"><CircleUserRound size={19} /></span>
@@ -173,12 +176,12 @@ export function SettingsView({
           <SegmentedControl label={t('audioQuality')} value={naturalVoice ? 'natural' : 'standard'} options={[{ value: 'standard', label: t('standard') }, { value: 'natural', label: t('naturalVoice') }]} onChange={(value) => onAudioQualityChange(value === 'natural' ? 1 : 0)} />
           <p>{t('naturalVoiceDescription')}</p>
         </div>
-        <ToggleRow icon={<Gauge size={18} />} label={t('varispeed')} description={t('varispeedDescription')} checked={preferences.varispeed} onChange={(varispeed) => onPreferencesChange({ varispeed })} />
+        {RELEASE_POLICY.varispeed ? <ToggleRow icon={<Gauge size={18} />} label={t('varispeed')} description={t('varispeedDescription')} checked={preferences.varispeed} onChange={(varispeed) => onPreferencesChange({ varispeed })} /> : null}
         <SettingControlRow icon={<AudioLines size={18} />} label={t('pitchDisplay')}>
           <SegmentedControl label={t('pitchDisplay')} value={preferences.pitchDisplay} options={[{ value: 'cents', label: 'Cents' }, { value: 'hz', label: 'Hz' }]} onChange={(value) => onPreferencesChange({ pitchDisplay: value as AppPreferences['pitchDisplay'] })} />
         </SettingControlRow>
-        <SettingControlRow icon={<SlidersHorizontal size={18} />} label={t('keyRange')} description={t('extendedRangeDescription')}>
-          <SelectControl value={String(preferences.keyRange)} ariaLabel={t('keyRange')} onChange={(value) => onPreferencesChange({ keyRange: Number(value) as AppPreferences['keyRange'] })} options={[{ value: '6', label: '±6' }, { value: '12', label: '±12' }, { value: '24', label: '±24' }, { value: '36', label: '±36' }]} />
+        <SettingControlRow icon={<SlidersHorizontal size={18} />} label={t('keyRange')} description={t(RELEASE_POLICY.extendedKeyRange ? 'extendedRangeDescription' : 'publicKeyRangeDescription')}>
+          <SelectControl value={String(Math.min(preferences.keyRange, 12))} ariaLabel={t('keyRange')} onChange={(value) => onPreferencesChange({ keyRange: Number(value) as AppPreferences['keyRange'] })} options={RELEASE_POLICY.extendedKeyRange ? [{ value: '6', label: '±6' }, { value: '12', label: '±12' }, { value: '24', label: '±24' }, { value: '36', label: '±36' }] : [{ value: '6', label: '±6' }, { value: '12', label: '±12' }]} />
         </SettingControlRow>
         <SettingControlRow icon={<AudioLines size={18} />} label={t('referenceTuning')}>
           <SelectControl value={String(preferences.referenceTuning)} ariaLabel={t('referenceTuning')} onChange={(value) => onPreferencesChange({ referenceTuning: Number(value) as AppPreferences['referenceTuning'] })} options={[432, 440, 442].map((value) => ({ value: String(value), label: `${value} Hz` }))} />
@@ -186,7 +189,7 @@ export function SettingsView({
       </SettingsSection>
 
       <SettingsSection title={t('settingsLayout')}>
-        {(['key', 'finePitch', 'speed', 'loop', 'bpm', 'vocalReducer', 'equalizer'] as PracticeModule[]).map((module) => (
+        {(RELEASE_POLICY.modules as PracticeModule[]).map((module) => (
           <ToggleRow key={module} icon={<LayoutList size={18} />} label={t(moduleLabel(module))} checked={preferences.modules[module]} onChange={(enabled) => onModuleChange(module, enabled)} />
         ))}
       </SettingsSection>

@@ -38,7 +38,7 @@ export async function readDriveSyncFile(
   await assertDriveResponse(download);
   const document = parseDriveSyncDocument(await download.text());
   if (!document) {
-    throw new Error('Google Drive 中的調唱同步資料已損毀或版本不相容');
+    throw new Error('Google Drive 中的 Karaoke Kaiju 同步資料已損毀或版本不相容');
   }
   return { fileId, document };
 }

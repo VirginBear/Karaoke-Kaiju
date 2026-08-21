@@ -6,9 +6,14 @@ release/
 coverage/
 playwright-report/
 test-results/
+artifacts/
 docs/private/
 local_output/
 model-cache/
 test-fixtures/private/
 .env*
 !.env.example
+
+# Local visual design archive; public brand masters live in public/brand/ and website/assets/.
+design/
+docs/brand-concepts/*.png

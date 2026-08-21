@@ -100,7 +100,7 @@ export function createLyricsOverlayController(options?: {
 }): LyricsOverlayController {
   const host = document.createElement('div');
   host.id = 'diaochang-karaoke-overlay';
-  host.setAttribute('aria-label', '調唱動態歌詞');
+  host.setAttribute('aria-label', 'Karaoke Kaiju 動態歌詞');
   host.setAttribute('data-layout', 'dock-bottom');
 
   const shadow = host.attachShadow({ mode: 'open' });
@@ -574,4 +574,3 @@ export function createLyricsOverlayController(options?: {
     },
   };
 }
-

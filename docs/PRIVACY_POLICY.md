@@ -1,82 +1,43 @@
-# 調唱（Diaochang）隱私權政策 / Privacy Policy
+# Karaoke Kaiju 隱私權政策 / Privacy Policy
 
-> 最近更新日期：2026 年 8 月 21 日 / Last Updated: August 21, 2026
+> 0.1.0 公開測試版；最近更新：2026 年 8 月 21 日
 
-「調唱」（以下簡稱「本擴充功能」或「我們」）是一款專為使用者在 YouTube 與網頁媒體上進行歌唱練唱（包含升降 Key、微調音高、變速、A–B 循環與歌詞同步）設計的 Google Chrome 桌面版擴充功能。
+Karaoke Kaiju 是用於 YouTube 與 YouTube Music 歌唱練習的 Chrome 擴充功能。本政策描述 0.1.0 公開建置實際開放的功能與權限。
 
-我們非常重視您的個人隱私。本隱私權政策旨在清楚說明本擴充功能如何處理您的資料、權限使用目的以及我們的隱私承諾。
+## 繁體中文
 
----
+### 資料處理原則
 
-## 繁體中文版 (Traditional Chinese)
+- 我們沒有開發者自有帳號系統、後端資料庫、廣告或第三方追蹤程式。
+- 即時移調、音高微調與其他核心音訊處理在使用者裝置上的 Web Audio 管線執行。
+- 歌單、歌曲 URL、Key、cents、速度、A–B、最近播放、歌詞與介面偏好預設儲存在 `chrome.storage.local`。
+- 使用者主動開啟 Google 帳號同步時，歌單與歌詞會經由 Chrome 內建的 `chrome.storage.sync` 保存到目前的 Chrome Sync 帳號。我們無法取得 Google 密碼，資料也不會經過開發者伺服器。
+- 0.1.0 公開版不連線外部 AI 服務，也不要求 Groq 或 Google Drive API 網域權限。
 
-### 1. 我們收集哪些資料？
-本擴充功能採用 **「本機優先（Local-First）」** 架構。我們沒有自己的後端資料庫，不會在開發者伺服器收集、儲存或轉售您的個人身分資料、瀏覽紀錄或音訊檔案；若您選用 Groq AI 歌詞，音訊會在明確同意後直接傳送給 Groq。
+### 權限用途
 
-- **練唱參數與歌單資料**：您建立的歌單名稱、歌曲 URL、Key（升降半音）、音高微調（cents）、播放速度、A–B 循環點與自訂歌詞等，均儲存在您瀏覽器本機的 `chrome.storage.local`。
-- **Google 帳號與 Chrome Sync（選用功能）**：若您主動在設定中啟用「Google 帳號同步」，擴充功能會使用 Chrome 內建的 `chrome.storage.sync` API 將您的歌單與歌詞設定加密同步至您已登入的 Google Chrome 帳戶中。我們不會取得您的 Google 密碼或未授權的帳戶資訊。
-- **Google Drive 應用程式資料同步（選用功能）**：若您主動授權，擴充功能會使用最小範圍的 `drive.appdata` OAuth 權限，把歌單與個人歌詞直接保存到您自己 Google Drive 的隱藏 `appDataFolder`。資料不會出現在一般 Drive 檔案清單，也不會經過開發者伺服器；擴充功能不能讀取您 Drive 中的其他檔案。
-- **AI 歌詞時間碼產生（BYOK 自備金鑰，選用功能）**：
-  - 若您選擇使用 Groq Whisper AI 產生動態歌詞時間碼，您所輸入的 Groq API Key 沒有內建預設值；輸入後僅保存於本機 `chrome.storage.local`，可在歌詞頁清除，絕不會寫入開發者伺服器。
-  - 當您主動點擊「產生」並勾選同意後，音訊片段才會透過 HTTPS 直接傳送至 Groq 官方 API 進行語音辨識；辨識完成後僅取回時間碼文字，我們不會保留或轉發該音訊。
+| 權限 | 用途 |
+| --- | --- |
+| `activeTab`、`scripting` | 使用者主動開啟工具後，偵測目前分頁媒體並顯示隔離的 KTV 歌詞介面。 |
+| `tabCapture` | 使用者點擊圖示後擷取目前分頁音訊，提供即時移調。 |
+| `offscreen` | 依 Manifest V3 規範，在背景文件執行 AudioContext 與 DSP。 |
+| `sidePanel` | 顯示固定的練唱控制面板。 |
+| `storage`、`unlimitedStorage` | 保存歌單、歌詞、練唱設定與較大的本機時間碼資料。 |
+| `identity`、`identity.email` | 確認目前 Chrome 個人檔案的登入狀態，讓使用者選擇是否啟用 Chrome Sync。 |
+| YouTube／YouTube Music 網域 | 讀取媒體狀態、控制播放位置並在支援頁面顯示歌詞。 |
 
-### 2. 瀏覽器權限使用說明 (Permissions Justification)
-本擴充功能僅向 Chrome 申請提供歌唱練習功能所不可或缺的最小權限：
+### 分享、保留與刪除
 
-| 權限項目 | 使用目的與必要性 |
-| :--- | :--- |
-| `tabCapture` | 用於在使用者點擊啟動後，即時擷取目前分頁的音訊串流，以進行 AudioWorklet 移調（十二平均律升降 Key）、共振峰修正與變速處理。 |
-| `offscreen` | 依據 Chrome Manifest V3 安全架構規範，在獨立的背景 AudioContext 執行低延遲數位訊號處理（DSP）與音訊運算。 |
-| `storage` | 於使用者本機儲存練唱歌單、最近播放紀錄、歌詞偏好設定與介面自訂項目。 |
-| `identity` / `identity.email` | 用於識別您目前登入 Chrome 的 Google 帳號 Email，以便提供選用的 Chrome Sync 跨裝置歌單同步功能。 |
-| `scripting` / `activeTab` | 當使用者在 YouTube 分頁主動開啟擴充功能時，於影片畫面上掛載 Shadow DOM 雙行 KTV 歌詞浮動字幕。 |
-| `host_permissions` (`*://*.youtube.com/*`) | 用於在 YouTube 與 YouTube Music 網頁上偵測播放狀態、控制時間軸跳轉與呈現歌詞。 |
-| `optional_host_permissions` (`https://api.groq.com/*`) | 僅在使用者啟用 AI 歌詞功能時，經使用者授權後連線至 Groq API 進行語音辨識。 |
-| `optional_host_permissions` (`https://www.googleapis.com/*`) 與 OAuth `drive.appdata` | 只在使用者主動連動 Google Drive 時要求，用於讀寫本擴充功能在隱藏 `appDataFolder` 內建立的單一同步檔案；無權讀取一般 Drive 文件。 |
+我們不販售或提供個人資料給廣告商或資料經紀商。使用者可在擴充功能內刪除歌單、歌詞與最近紀錄；移除擴充功能時，Chrome 會清除其本機資料。Chrome Sync 內容依使用者的 Chrome／Google 帳號同步設定與 Google 政策管理。
 
-### 3. 資料分享與第三方服務
-- **絕不轉售資料**：我們不會將您的任何個人資料、使用習慣或音訊資料販售或提供給廣告商、資料經紀商或第三方機構。
-- **無追蹤與無廣告**：本擴充功能無任何第三方追蹤代碼（如 Google Analytics、Facebook Pixel 等），亦無任何橫幅或插入式廣告。
-- **第三方 API（Groq）**：使用 AI 歌詞功能時，音訊將直接傳送至 Groq（遵循 Groq 隱私與服務條款），不經過任何中繼代理伺服器。
+## English
 
-### 4. 資料儲存與刪除
-所有儲存於您電腦上的歌單、歷史紀錄與歌詞資料，均可透過擴充功能介面中的「清除」或「刪除歌單」隨時移除。當您自 Chrome 移除本擴充功能時，所有儲存於 `chrome.storage.local` 的資料將一併被瀏覽器自動完整清除。Google Drive `appDataFolder` 備份不會因停用同步或解除安裝而自動刪除；請先在設定中使用「刪除我的 Drive 備份」，擴充功能會刪除其建立的同步檔案並保留本機資料。
+Karaoke Kaiju 0.1.0 has no developer-operated account system, backend database, advertising, or third-party analytics. Core pitch and playback processing runs on the user's device. Practice presets, playlists, song URLs, lyrics, history, and preferences are stored in `chrome.storage.local`.
 
-### 5. 聯絡我們
-若您對本隱私權政策或擴充功能有任何疑問、建議或問題回報，歡迎透過以下方式與開發團隊聯繫：
-- **開發者 GitHub / 專案頁面**：https://github.com/
-- **聯絡 Email**：support@diaochang.app (或您的開發者電子郵件)
+If the user explicitly enables Google Account sync, playlists and lyrics use Chrome's native `chrome.storage.sync` service for the currently signed-in Chrome profile. The developer cannot access the user's Google password, and the data does not pass through a developer server.
 
----
+The 0.1.0 public build does not connect to external AI services and does not request Groq or Google Drive API origins. Browser permissions are used only for active-tab media control, tab audio capture, background Web Audio processing, the side panel, local/sync storage, Chrome profile status, and supported YouTube page integration.
 
-## English Version
+We do not sell user data. Users can delete playlists, lyrics, and recent history from the extension. Removing the extension causes Chrome to remove its local extension data; synchronized data follows the user's Chrome Sync and Google account settings.
 
-### 1. What Data We Collect
-Diaochang uses a **Local-First architecture** with no developer-owned backend database. We do not collect, store, or sell your personal information, browsing history, or audio on developer servers; optional Groq AI lyrics send audio directly to Groq only after explicit consent.
-
-- **Practice Settings & Playlists**: Your playlists, song URLs, pitch adjustments (semitones/cents), playback speed, A-B loop points, and lyrics are stored locally within your browser using `chrome.storage.local`.
-- **Chrome Sync (Optional)**: If you choose to enable Google Account sync, your playlist and lyrics configuration are synchronized via Chrome's native `chrome.storage.sync` API. We never access your credentials or sensitive account data.
-- **Google Drive App Data Sync (Optional)**: After your explicit authorization, playlists and personal lyrics can be stored directly in the hidden `appDataFolder` of your own Google Drive using the narrow `drive.appdata` OAuth scope. The extension cannot read ordinary Drive files, and the data never passes through a developer server.
-- **AI Lyrics Transcription (BYOK, Optional)**:
-  - If you use Groq Whisper AI to generate timed lyrics, there is no bundled default key. A key entered for personal testing is stored only in the extension's local storage, can be cleared from the lyrics view, and is never written to a developer server.
-  - Audio is sent directly to Groq's official API over HTTPS only after your explicit consent and initiation.
-
-### 2. Permission Justifications
-We adhere to Google's principle of least privilege, requesting only what is strictly required for core functionality:
-
-- `tabCapture`: To capture active tab audio in real-time for pitch-shifting and tempo alteration via AudioWorklet.
-- `offscreen`: To process low-latency Web Audio API / DSP pipelines in a dedicated background offscreen document as required by Manifest V3.
-- `storage`: To store practice presets, playlists, and lyrics locally on your device.
-- `identity` & `identity.email`: To identify your active Chrome sync profile for cross-device playlist restoration.
-- `scripting` & `activeTab`: To render the KTV lyrics overlay inside an isolated Shadow DOM on YouTube video players.
-- `host_permissions` (`*://*.youtube.com/*`): To control media playback, seek timestamps, and overlay lyrics on YouTube pages.
-- `optional_host_permissions` (`https://api.groq.com/*`): Requested on-demand only when using the optional Groq AI transcription feature.
-- `optional_host_permissions` (`https://www.googleapis.com/*`) and OAuth `drive.appdata`: Requested on-demand only when you link Drive, and limited to the extension's hidden app-data file.
-
-### 3. Data Protection & Non-Disclosure
-- **No Data Sale**: We do not sell or monetize user data.
-- **No Ads or Trackers**: No third-party tracking scripts or advertisements are bundled.
-- **Data Deletion**: Uninstalling the extension deletes its local storage data. A Drive app-data backup is not automatically deleted when sync is disabled or the extension is uninstalled; use “Delete my Drive backup” in Settings first to remove the cloud file while keeping local data.
-
-### 4. Contact
-For any questions regarding privacy, please contact the developer via GitHub or email.
+Questions and reports: [GitHub Issues](https://github.com/VirginBear/Karaoke-Kaiju/issues)

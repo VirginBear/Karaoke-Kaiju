@@ -1,0 +1,24 @@
+Karaoke Kaiju 0.1.0 - Third-Party Notices
+
+The public extension package includes the following production dependencies.
+Their original licenses remain in effect.
+
+SoundTouchJS packages 2.1.1
+  - @soundtouchjs/audio-worklet
+  - @soundtouchjs/core
+  - @soundtouchjs/formant-correction-worklet
+  - @soundtouchjs/interpolation-strategy-lanczos
+  - @soundtouchjs/worklet-base
+License: Mozilla Public License 2.0 (MPL-2.0)
+Source: https://github.com/cutterbl/SoundTouchJS
+License text: https://www.mozilla.org/MPL/2.0/
+
+Lucide React 1.31.0
+License: ISC
+Source: https://github.com/lucide-icons/lucide
+
+React, React DOM, and Scheduler
+License: MIT
+Source: https://github.com/facebook/react
+
+Karaoke Kaiju does not claim ownership of these third-party components.

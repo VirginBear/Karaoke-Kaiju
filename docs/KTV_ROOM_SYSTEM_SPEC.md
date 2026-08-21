@@ -1,4 +1,4 @@
-# 「調唱 Diaochang」KTV 包廂掃碼點歌系統規格書 (KTV Room & Shared Queue Spec)
+# Karaoke Kaiju KTV 包廂掃碼點歌系統規格書 (KTV Room & Shared Queue Spec)
 
 ## 1. 系統願景與設計目標
 

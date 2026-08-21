@@ -1,4 +1,4 @@
-// Conflict-free keyboard shortcuts definitions and helper functions for Diaochang
+// Conflict-free keyboard shortcuts definitions and helper functions for Karaoke Kaiju
 
 export interface ShortcutDefinition {
   id: string;

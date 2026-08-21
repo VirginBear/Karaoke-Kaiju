@@ -1,6 +1,6 @@
-# Phase 1–5 側邊面板與 KTV 覆蓋 UI 規格（0.0.11 基線）
+# Karaoke Kaiju 側邊面板與 KTV 覆蓋 UI 規格（0.1.0 公開測試基線）
 
-- 視覺基準：`design/phase1-apple-dual-theme-concept.png`、`design/phase2-playlists-settings-concept.png`、`design/phase3-practice-console-concept.png`、`design/phase3-settings-concept.png`、`design/phase3-library-concept.png`
+- 視覺基準：`public/brand/` 正式圖示、`website/` 官網與目前 Side Panel 實作；舊版概念稿只保存在本機設計歷史
 - 實作尺寸：420 × 900 CSS px，並支援 320–480 px 面板寬度
 - 狀態：根據第一輪使用體驗回饋採用
 
@@ -60,7 +60,7 @@ danger            #FF453A
 
 ## 版面
 
-- Header 左側顯示「調唱」與目前歌曲／處理狀態，右側只保留設定入口；亮暗切換集中在設定。
+- Header 左側顯示 Karaoke Kaiju 方形怪獸頭像、品牌名與目前歌曲／處理狀態，右側只保留設定入口；亮暗切換集中在設定。
 - 歌曲區使用單一 surface，上方為偵測狀態，中間為歌曲資訊，下方為全寬開始／停止按鈕。
 - Key 是主視覺焦點；減、數值、加使用對稱版面。
 - Key、Fine Pitch、速度與 A–B 使用同一套輕量控制卡；靠留白與髮絲框線分層，不使用厚重陰影。
@@ -129,17 +129,17 @@ SidePanelApp + I18nProvider
 
 ## 0.0.6 四語工作台與資料庫增量
 
-- 參考產品只提供「控制卡、長設定、歷史／資料庫」的資訊架構；視覺改用調唱既有系統藍、灰階、Apple 系統字與亮暗雙主題。
+- 參考產品只提供「控制卡、長設定、歷史／資料庫」的資料架構；視覺改用 Karaoke Kaiju 系統藍、灰階、Apple 系統字與亮暗雙主題。
 - Header 僅保留歌曲／處理狀態和設定入口；主題切換集中到設定，減少每次練唱的視覺噪音。
 - Bottom nav 固定四個等寬項目：練唱、最近、歌單、歌詞；文字與圖示都必須跟語言切換。
 - 主控制卡共用 16 px 圓角、髮絲框線與一致標題列；Key 最大，Fine Pitch／速度次之，A–B 允許向下捲動。
 - 「最近」使用真實縮圖、標題、平台／相對時間及 Key／速度，主動作是同分頁播放，次要動作是加入歌單與移除。
 - 設定採長捲動 grouped list；可用選項可操作，未完成模組為停用列並標記「後續階段」。
-- 四語為繁中、英文、日文、簡中，所有可見文字與 `aria-label` 都使用同一字典；品牌「調唱」維持不翻譯。
+- 四語為繁中、英文、日文、簡中，所有可見文字與 `aria-label` 都使用同一字典；品牌 `Karaoke Kaiju` 維持不翻譯。
 
 ## 0.0.7 雙行 KTV 歌詞增量
 
-- 概念稿：[phase5-karaoke-overlay-concept.png](../design/phase5-karaoke-overlay-concept.png)。
+- 視覺驗收以目前 Shadow DOM 雙行覆蓋實作與 `docs/UI_FIDELITY.md` 為準。
 - 影片覆蓋層固定在播放器下三分之一，保持透明黑遮罩、白字與 iOS 系統藍，不使用參考產品的黃色品牌。
 - 同時只顯示目前句和下一句；偶數句左上、下一句右下，之後交換，讓演唱者在唱目前句時先看到下一句。
 - 目前句由白色底字與藍色複本疊合，以 `clip-path` 呈現左至右進度；下一句維持白色。

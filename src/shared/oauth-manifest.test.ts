@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { DRIVE_APPDATA_SCOPE, configureGoogleDriveOAuth } from './oauth-manifest';
 
 describe('Google Drive OAuth manifest configuration', () => {
-  const baseManifest = { manifest_version: 3, name: 'Test', version: '0.0.12' };
+  const baseManifest = { manifest_version: 3, name: 'Test', version: '0.0.13' };
 
   it('keeps OAuth out of ordinary builds when no client id is configured', () => {
     const result = configureGoogleDriveOAuth(baseManifest, undefined);
