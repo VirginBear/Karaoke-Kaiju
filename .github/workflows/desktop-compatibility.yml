@@ -1,0 +1,53 @@
+name: Desktop Chrome Compatibility
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/desktop-compatibility.yml'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'public/**'
+      - 'scripts/**'
+      - 'src/**'
+      - 'vite.config.ts'
+      - 'vitest.config.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  chrome-for-testing:
+    name: Chrome for Testing (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.19.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build public extension
+        run: pnpm run build
+
+      - name: Run extension smoke test in stable Chrome for Testing
+        run: pnpm run test:extension:cft

@@ -20,6 +20,15 @@ pnpm run package
 
 任何一項失敗都不能發布。
 
+## Windows／macOS Chrome 相容性
+
+```bash
+pnpm run build
+pnpm run test:extension:cft
+```
+
+這個命令會下載官方 stable Chrome for Testing，載入目前的 `dist/`，並輸出瀏覽器版本、作業系統、CPU 架構及完整擴充功能 smoke test 結果。GitHub Actions 會在 Windows 與 macOS 各執行一次；平台支援結論與 Orion 限制見 [PLATFORM_COMPATIBILITY.md](PLATFORM_COMPATIBILITY.md)。
+
 ## 手動載入公開版
 
 1. 執行 `pnpm run build`。

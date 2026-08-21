@@ -670,3 +670,13 @@
 - 任務：修正 0.1.0 合併後 GitHub Actions 顯示的 Node.js 20 action runtime 棄用警告。
 - 先立驗收標靶：依各 action 官方最新 release major 更新 CI 與 Pages 工作流程；新 PR 的完整 extension check 與合併後 Pages 部署都必須成功，且不再產生 Node.js 20 棄用 annotation。
 - 變更：`actions/checkout`、`actions/setup-node`、`actions/upload-artifact`、`pnpm/action-setup`、`actions/configure-pages`、`actions/upload-pages-artifact` 與 `actions/deploy-pages` 更新到 2026-08-21 官方最新 major。
+
+## 2026-08-21 — Windows／macOS Chrome 與 iPad Orion 相容性驗收
+
+- 任務：檢驗 `0.1.0` 是否可由 Windows Google Chrome、macOS Google Chrome 與 iPad Orion 共用同一份發布版本，建立可由工程師與 AI 重跑的跨平台證據。
+- 先立驗收標靶：同一份 `dist/` 必須在 Windows／macOS stable Chrome for Testing 完成背景啟動、Key、Fine Pitch、Speed、A–B、歌詞覆蓋、同分頁歌單與 Sync 往返且錯誤為空；iPad Orion 必須逐項對照官方 WebExtensions API，不以「可以安裝」代替核心音訊驗收。
+- 變更檔案：`scripts/browser-launch-options.mjs` 與測試、`scripts/chrome-for-testing-smoke.mjs`、`scripts/extension-smoke.mjs`、`vitest.config.ts`、`package.json`、`.github/workflows/desktop-compatibility.yml`、`docs/PLATFORM_COMPATIBILITY.md`、`docs/TESTING.md`、`README.md`、`TODO.md`。
+- macOS 結果：macOS ARM64 的官方 stable Chrome for Testing 152.0.7977.54 通過完整 smoke test，Key `+7`、Speed `0.75×`、A–B、KTV 覆蓋層、同分頁切歌／保存參數／單曲循環與 Sync 往返皆成功，`errors: []`。
+- Orion 結論：官方 iOS／iPadOS API 表未列出 `sidePanel`、`tabCapture`、`offscreen`，`storage.sync` 僅部分支援且未列 `identity.getProfileUserInfo`；目前不能提供核心升降 Key 或 Chrome Google 帳號同步的完整承諾，因此 `0.1.0` 不列為 iPad Orion 支援版本。
+- 跨平台 CI 結果：GitHub Windows x64 與 macOS ARM64 均使用 Chrome for Testing `152.0.7977.54` 通過完整 smoke test，兩者皆為 `errors: []`；既有 Linux `pnpm run check`／公開封包工作亦通過。
+- 未完成／風險：Chrome 137 起品牌正式版不允許自動化 `--load-extension`，所以 Windows／macOS Stable 最終安裝與聽感仍須保留人工實機驗收；iPad Orion 仍需獨立相容層與實體裝置。
