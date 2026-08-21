@@ -1,6 +1,6 @@
 # 調唱（Diaochang）隱私權政策 / Privacy Policy
 
-> 最近更新日期：2026 年 8 月 18 日 / Last Updated: August 18, 2026
+> 最近更新日期：2026 年 8 月 21 日 / Last Updated: August 21, 2026
 
 「調唱」（以下簡稱「本擴充功能」或「我們」）是一款專為使用者在 YouTube 與網頁媒體上進行歌唱練唱（包含升降 Key、微調音高、變速、A–B 循環與歌詞同步）設計的 Google Chrome 桌面版擴充功能。
 
@@ -15,6 +15,7 @@
 
 - **練唱參數與歌單資料**：您建立的歌單名稱、歌曲 URL、Key（升降半音）、音高微調（cents）、播放速度、A–B 循環點與自訂歌詞等，均儲存在您瀏覽器本機的 `chrome.storage.local`。
 - **Google 帳號與 Chrome Sync（選用功能）**：若您主動在設定中啟用「Google 帳號同步」，擴充功能會使用 Chrome 內建的 `chrome.storage.sync` API 將您的歌單與歌詞設定加密同步至您已登入的 Google Chrome 帳戶中。我們不會取得您的 Google 密碼或未授權的帳戶資訊。
+- **Google Drive 應用程式資料同步（選用功能）**：若您主動授權，擴充功能會使用最小範圍的 `drive.appdata` OAuth 權限，把歌單與個人歌詞直接保存到您自己 Google Drive 的隱藏 `appDataFolder`。資料不會出現在一般 Drive 檔案清單，也不會經過開發者伺服器；擴充功能不能讀取您 Drive 中的其他檔案。
 - **AI 歌詞時間碼產生（BYOK 自備金鑰，選用功能）**：
   - 若您選擇使用 Groq Whisper AI 產生動態歌詞時間碼，您所輸入的 Groq API Key 沒有內建預設值；輸入後僅保存於本機 `chrome.storage.local`，可在歌詞頁清除，絕不會寫入開發者伺服器。
   - 當您主動點擊「產生」並勾選同意後，音訊片段才會透過 HTTPS 直接傳送至 Groq 官方 API 進行語音辨識；辨識完成後僅取回時間碼文字，我們不會保留或轉發該音訊。
@@ -31,6 +32,7 @@
 | `scripting` / `activeTab` | 當使用者在 YouTube 分頁主動開啟擴充功能時，於影片畫面上掛載 Shadow DOM 雙行 KTV 歌詞浮動字幕。 |
 | `host_permissions` (`*://*.youtube.com/*`) | 用於在 YouTube 與 YouTube Music 網頁上偵測播放狀態、控制時間軸跳轉與呈現歌詞。 |
 | `optional_host_permissions` (`https://api.groq.com/*`) | 僅在使用者啟用 AI 歌詞功能時，經使用者授權後連線至 Groq API 進行語音辨識。 |
+| `optional_host_permissions` (`https://www.googleapis.com/*`) 與 OAuth `drive.appdata` | 只在使用者主動連動 Google Drive 時要求，用於讀寫本擴充功能在隱藏 `appDataFolder` 內建立的單一同步檔案；無權讀取一般 Drive 文件。 |
 
 ### 3. 資料分享與第三方服務
 - **絕不轉售資料**：我們不會將您的任何個人資料、使用習慣或音訊資料販售或提供給廣告商、資料經紀商或第三方機構。
@@ -38,7 +40,7 @@
 - **第三方 API（Groq）**：使用 AI 歌詞功能時，音訊將直接傳送至 Groq（遵循 Groq 隱私與服務條款），不經過任何中繼代理伺服器。
 
 ### 4. 資料儲存與刪除
-所有儲存於您電腦上的歌單、歷史紀錄與歌詞資料，均可透過擴充功能介面中的「清除」或「刪除歌單」隨時移除。當您自 Chrome 移除本擴充功能時，所有儲存於 `chrome.storage.local` 的資料將一併被瀏覽器自動完整清除。
+所有儲存於您電腦上的歌單、歷史紀錄與歌詞資料，均可透過擴充功能介面中的「清除」或「刪除歌單」隨時移除。當您自 Chrome 移除本擴充功能時，所有儲存於 `chrome.storage.local` 的資料將一併被瀏覽器自動完整清除。Google Drive `appDataFolder` 備份不會因停用同步或解除安裝而自動刪除；請先在設定中使用「刪除我的 Drive 備份」，擴充功能會刪除其建立的同步檔案並保留本機資料。
 
 ### 5. 聯絡我們
 若您對本隱私權政策或擴充功能有任何疑問、建議或問題回報，歡迎透過以下方式與開發團隊聯繫：
@@ -54,6 +56,7 @@ Diaochang uses a **Local-First architecture** with no developer-owned backend da
 
 - **Practice Settings & Playlists**: Your playlists, song URLs, pitch adjustments (semitones/cents), playback speed, A-B loop points, and lyrics are stored locally within your browser using `chrome.storage.local`.
 - **Chrome Sync (Optional)**: If you choose to enable Google Account sync, your playlist and lyrics configuration are synchronized via Chrome's native `chrome.storage.sync` API. We never access your credentials or sensitive account data.
+- **Google Drive App Data Sync (Optional)**: After your explicit authorization, playlists and personal lyrics can be stored directly in the hidden `appDataFolder` of your own Google Drive using the narrow `drive.appdata` OAuth scope. The extension cannot read ordinary Drive files, and the data never passes through a developer server.
 - **AI Lyrics Transcription (BYOK, Optional)**:
   - If you use Groq Whisper AI to generate timed lyrics, there is no bundled default key. A key entered for personal testing is stored only in the extension's local storage, can be cleared from the lyrics view, and is never written to a developer server.
   - Audio is sent directly to Groq's official API over HTTPS only after your explicit consent and initiation.
@@ -68,11 +71,12 @@ We adhere to Google's principle of least privilege, requesting only what is stri
 - `scripting` & `activeTab`: To render the KTV lyrics overlay inside an isolated Shadow DOM on YouTube video players.
 - `host_permissions` (`*://*.youtube.com/*`): To control media playback, seek timestamps, and overlay lyrics on YouTube pages.
 - `optional_host_permissions` (`https://api.groq.com/*`): Requested on-demand only when using the optional Groq AI transcription feature.
+- `optional_host_permissions` (`https://www.googleapis.com/*`) and OAuth `drive.appdata`: Requested on-demand only when you link Drive, and limited to the extension's hidden app-data file.
 
 ### 3. Data Protection & Non-Disclosure
 - **No Data Sale**: We do not sell or monetize user data.
 - **No Ads or Trackers**: No third-party tracking scripts or advertisements are bundled.
-- **Data Deletion**: Uninstalling the extension immediately deletes all local storage data associated with the extension.
+- **Data Deletion**: Uninstalling the extension deletes its local storage data. A Drive app-data backup is not automatically deleted when sync is disabled or the extension is uninstalled; use “Delete my Drive backup” in Settings first to remove the cloud file while keeping local data.
 
 ### 4. Contact
 For any questions regarding privacy, please contact the developer via GitHub or email.

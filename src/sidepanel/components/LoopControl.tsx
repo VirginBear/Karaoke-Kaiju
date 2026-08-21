@@ -1,7 +1,8 @@
-import { BookmarkPlus, MapPin, Play, Repeat2, RotateCcw, Trash2 } from 'lucide-react';
+import { BookmarkPlus, MapPin, Play, Plus, Repeat2, RotateCcw, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { formatTime, toPercent } from '../../shared/audio';
-import type { LoopClip, LoopState } from '../../shared/protocol';
+import type { LoopClip, LoopState, PracticeSequenceStep } from '../../shared/protocol';
+import type { PracticeSequenceRun } from '../../shared/practice-sequence';
 import { useI18n } from '../i18n';
 
 interface LoopControlProps {
@@ -14,7 +15,10 @@ interface LoopControlProps {
   onSelectClip?: (clip: LoopClip) => void;
   onSaveClip?: (name: string) => void;
   onDeleteClip?: (clipId: string) => void;
-  onStartSequence?: (steps: { speed: number; reps: number }[]) => void;
+  onStartSequence?: (steps: PracticeSequenceStep[]) => void;
+  onCancelSequence?: () => void;
+  sequence?: PracticeSequenceRun | null;
+  sequenceError?: string | null;
 }
 
 const WAVE_HEIGHTS = [
@@ -33,10 +37,20 @@ export function LoopControl({
   onSelectClip,
   onSaveClip,
   onDeleteClip,
+  onStartSequence,
+  onCancelSequence,
+  sequence,
+  sequenceError,
 }: LoopControlProps) {
   const { t } = useI18n();
   const [newClipName, setNewClipName] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showSequenceForm, setShowSequenceForm] = useState(false);
+  const [sequenceSteps, setSequenceSteps] = useState<PracticeSequenceStep[]>([
+    { speed: 0.75, reps: 2 },
+    { speed: 0.9, reps: 2 },
+    { speed: 1, reps: 1 },
+  ]);
 
   const startPercent = toPercent(loop.start ?? 0, duration);
   const endPercent = toPercent(loop.end ?? duration, duration);
@@ -44,6 +58,7 @@ export function LoopControl({
   const canLoop = loop.start !== null && loop.end !== null && loop.end - loop.start >= 0.5;
 
   const clips = loop.clips ?? [];
+  const sequenceCanStart = canLoop && !sequence?.running && sequenceSteps.length > 0;
 
   const handleSaveClipSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,6 +118,92 @@ export function LoopControl({
         <button type="button" className="secondary-button secondary-button--compact" onClick={onClear} disabled={disabled || (!canLoop && loop.start === null && loop.end === null)}>
           <Trash2 size={15} />{t('clear')}
         </button>
+      </div>
+
+      <div className="loop-sequence-container" style={{ marginTop: '12px', borderTop: '1px solid var(--border-subtle, rgba(255,255,255,0.08))', paddingTop: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+          <div>
+            <strong style={{ fontSize: '12px' }}>{t('practiceSequence')}</strong>
+            <div style={{ color: 'var(--text-secondary)', fontSize: '11px', marginTop: '2px' }}>{t('practiceSequenceDescription')}</div>
+          </div>
+          {sequence?.running ? (
+            <button type="button" className="secondary-button secondary-button--compact" onClick={onCancelSequence}>
+              <X size={14} />{t('stopSequence')}
+            </button>
+          ) : (
+            <button type="button" className="outline-button" onClick={() => setShowSequenceForm((open) => !open)} disabled={disabled}>
+              {showSequenceForm ? t('close') : t('editSequence')}
+            </button>
+          )}
+        </div>
+
+        {sequence?.running ? (
+          <div role="status" style={{ marginTop: '8px', padding: '7px 9px', borderRadius: '8px', background: 'var(--surface-selected, rgba(10,132,255,0.12))', color: 'var(--text-primary)', fontSize: '11px' }}>
+            {t('sequenceProgress', {
+              current: sequence.stepIndex + 1,
+              total: sequence.steps.length,
+              speed: sequence.steps[sequence.stepIndex]?.speed.toFixed(2) ?? '—',
+              reps: sequence.repetitionsCompleted + 1,
+              max: sequence.steps[sequence.stepIndex]?.reps ?? 1,
+            })}
+          </div>
+        ) : sequence?.completed ? (
+          <div role="status" style={{ marginTop: '8px', color: 'var(--text-secondary)', fontSize: '11px' }}>{t('sequenceCompleted')}</div>
+        ) : null}
+        {sequenceError ? <div role="alert" style={{ marginTop: '8px', color: 'var(--system-red, #ff453a)', fontSize: '11px' }}>{sequenceError}</div> : null}
+
+        {showSequenceForm && !sequence?.running ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '8px' }}>
+            {sequenceSteps.map((step, index) => (
+              <div key={`sequence-step-${index}`} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '6px', alignItems: 'center' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px' }}>
+                  <span>{t('sequenceSpeed')}</span>
+                  <input
+                    aria-label={`${t('sequenceSpeed')} ${index + 1}`}
+                    type="number"
+                    min="0.25"
+                    max="4"
+                    step="0.05"
+                    value={step.speed}
+                    onChange={(event) => {
+                      const speed = Number(event.currentTarget.value);
+                      setSequenceSteps((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, speed } : item));
+                    }}
+                    style={{ width: '58px' }}
+                  />×
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px' }}>
+                  <span>{t('sequenceReps')}</span>
+                  <input
+                    aria-label={`${t('sequenceReps')} ${index + 1}`}
+                    type="number"
+                    min="1"
+                    max="20"
+                    step="1"
+                    value={step.reps}
+                    onChange={(event) => {
+                      const reps = Number(event.currentTarget.value);
+                      setSequenceSteps((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, reps } : item));
+                    }}
+                    style={{ width: '52px' }}
+                  />
+                </label>
+                <button type="button" className="control-reset" aria-label={`${t('removeSequenceStep')} ${index + 1}`} onClick={() => setSequenceSteps((current) => current.filter((_, itemIndex) => itemIndex !== index))} disabled={sequenceSteps.length <= 1}>
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            ))}
+            <div style={{ display: 'flex', gap: '6px', marginTop: '2px' }}>
+              <button type="button" className="outline-button" onClick={() => setSequenceSteps((current) => [...current, { speed: 1, reps: 1 }])} disabled={sequenceSteps.length >= 8}>
+                <Plus size={14} />{t('addSequenceStep')}
+              </button>
+              <button type="button" className="btn btn-primary" onClick={() => onStartSequence?.(sequenceSteps)} disabled={disabled || !sequenceCanStart}>
+                <Play size={14} />{t('startSequence')}
+              </button>
+            </div>
+            {!canLoop ? <div style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>{t('sequenceNeedsLoop')}</div> : null}
+          </div>
+        ) : null}
       </div>
 
       {/* Multiple Loops & Clips section */}

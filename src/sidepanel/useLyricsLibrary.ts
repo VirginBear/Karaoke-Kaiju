@@ -245,11 +245,16 @@ export function useLyricsLibrary(media: MediaState, syncEnabled = false) {
     return entry;
   }, [commit, media.artist, media.available, media.title, media.url]);
 
+  const replaceLibrary = useCallback((next: LyricsLibrary) => {
+    commit(normalizeLyricsLibrary(next), false);
+  }, [commit]);
+
   return {
     library,
     current,
     loaded,
     sync,
+    replaceLibrary,
     importLrc: (text: string, sourceLabel: string) => {
       const parsed = parseLrc(text);
       return saveParsed({ ...parsed, sourceLabel });
@@ -361,4 +366,3 @@ export function useLyricsLibrary(media: MediaState, syncEnabled = false) {
     },
   };
 }
-

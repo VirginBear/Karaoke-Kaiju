@@ -310,12 +310,17 @@ export function usePlaylistLibrary() {
     setSync((current) => ({ ...current, ...account }));
   }, []);
 
+  const replaceLibrary = useCallback((next: PlaylistLibrary) => {
+    commitLibrary(normalizeLibrary(next), false);
+  }, [commitLibrary]);
+
   return {
     library,
     loaded,
     sync,
     setSyncEnabled,
     refreshAccount,
+    replaceLibrary,
     addPlaylist,
     renamePlaylist: (playlistId: string, name: string) =>
       update((current) => renamePlaylist(current, playlistId, name, Date.now())),

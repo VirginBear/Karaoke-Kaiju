@@ -6,3 +6,9 @@ release/
 coverage/
 playwright-report/
 test-results/
+docs/private/
+local_output/
+model-cache/
+test-fixtures/private/
+.env*
+!.env.example

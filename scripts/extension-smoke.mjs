@@ -298,7 +298,7 @@ try {
     tabTranscriptionResponse = await sendMessage({
       target: 'background',
       type: 'TRANSCRIBE_TAB_AUDIO',
-      apiKey: 'gsk_qa_ephemeral_only',
+      apiKey: 'qa-ephemeral-only',
       songContext: '調唱 QA - 目前分頁測試',
       durationSeconds: 2,
       qaDryRun: true,

@@ -8,7 +8,7 @@ afterEach(() => {
 describe('requestGroqTranscription', () => {
   it('sends an ephemeral bearer key and word timestamp request', async () => {
     const fetchMock = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
-      expect(init?.headers).toEqual({ Authorization: 'Bearer gsk_test_only' });
+      expect(init?.headers).toEqual({ Authorization: 'Bearer test-key-only' });
       expect(init?.body).toBeInstanceOf(FormData);
       const form = init?.body as FormData;
       expect(form.get('model')).toBe('whisper-large-v3');
@@ -25,7 +25,7 @@ describe('requestGroqTranscription', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     const result = await requestGroqTranscription({
-      apiKey: 'gsk_test_only',
+      apiKey: 'test-key-only',
       file: new Blob(['audio'], { type: 'audio/webm' }),
       fileName: 'tab.webm',
       songContext: '測試歌曲',

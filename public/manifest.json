@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_extensionName__",
   "short_name": "__MSG_extensionShortName__",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "default_locale": "zh_TW",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAprxH4EON3Kt/oi/clx5EGchvk9qdMx6QFfhFl1DjR7dm8JatljA5/3SaFB8X546cgcz4RnB/wVnhM4FL7qgG8WhrlztwHhzKsEvYLyZ6nrUZRj6Y6VBX0Y978y1JiLccfRyosnGlT08UjGpc9gHQb+Xbc9c1sdMZn77ZYwOMU8lBRnXG5wZRxePYaYlFfQpben4JUWJTJIXeFXm/HEbhhOo+U4MnXYtzqE/wv1mHtVUrtFgED+aUxmwQoCxrBrhYLYfBwkmVAsZSLjPeRYsyO1/AVrn2+fbczS/BkihkZS5/h9549t/i2K9gBCkOQ1vC6dqSqh+tufUHWk6J3qlq/QIDAQAB",
   "description": "__MSG_extensionDescription__",
@@ -25,7 +25,8 @@
     "https://*.googlevideo.com/*"
   ],
   "optional_host_permissions": [
-    "https://api.groq.com/*"
+    "https://api.groq.com/*",
+    "https://www.googleapis.com/*"
   ],
   "background": {
     "service_worker": "service-worker.js",

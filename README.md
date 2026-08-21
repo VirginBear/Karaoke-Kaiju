@@ -2,7 +2,8 @@
 
 這個專案是一個操作簡單、反應極速、以「唱歌練習」為單一目的的 Chrome 桌面版擴充功能。
 
-目前狀態：**版本 0.0.11（個人測試版）**
+目前狀態：**版本 0.0.12（個人測試版）**
+- **Google Drive `appDataFolder` 大容量同步已完成程式骨架；需建立專案專用 Chrome OAuth Client ID 才能啟用實機授權**
 - **目前分頁音訊分析與 Groq Whisper 動態歌詞對時（需使用者主動同意與自備 Key）**
 - **YouTube 串流解析為實驗性相容層；不保證平台改版後永遠可用**
 - **瀏覽器視窗下方獨立三分之一歌詞欄（`dock-bottom`，18%～50% 拖曳調整，不遮擋影片）與懸停快速工具列**
@@ -21,6 +22,7 @@
   - 「標準」與具共振峰修正的「自然人聲」移調品質切換。
   - `0.25×` 到 `4.0×` 播放速度控制，保留音高。
   - 設定 A、B 點、啟用區段循環與一鍵清除。
+  - 階梯式 A–B 練習序列：可編輯每階速度與重複次數，完成後自動恢復開始前速度。
   - 播放／暫停與前後跳轉秒數控制。
 - **視窗版面與點唱體驗**：
   - **瀏覽器底部獨立歌詞欄（`dock-bottom`）**：固定於視窗底部佔 1/3，完全不遮擋影片；頂部把手支援 18%～50% 即時拖曳高度調整，雙擊復原 30%。
@@ -35,11 +37,12 @@
   - 歌詞區段批次平移（自此句往後平移 ±0.1s / ±0.5s）與「復原至原始版本」快照。
   - 即時打拍對時模式（Tap-to-Time）：支援 Space / Enter 鍵盤快捷鍵與敲擊對時。
   - 預唱前置時間（Lead Time）0.5s ~ 3.0s 滑桿自訂。
-- **歌單與 Chrome Google 帳號跨電腦同步**：
+- **歌單與 Google 帳號跨電腦同步**：
   - 建立、改名、刪除多個練唱歌單；加入歌曲時一併保存 Key、cents、速度與 A–B 設定。
   - 點歌後在原本練唱分頁切換，不開新分頁；保存的練習參數自動套用。
   - 支援依序播放、自動下一首、上一首／下一首與單曲循環。
   - 使用 Chrome Sync 跨電腦同步歌單、歌詞、時間校正與顯示設定；無須第三方伺服器。
+  - 0.0.12 新增 Google Drive 隱藏 `appDataFolder` 同步：使用 `drive.appdata` 最小範圍 OAuth，歌單與歌詞分開比較更新時間後合併，避免 Chrome Sync 100 KB 配額成為長期限制。
   - 宣告 `unlimitedStorage`，可在本機保存較大量歌曲與動態歌詞；實際容量依裝置與 Chrome 配額而定。
 - **外觀、多語系與自訂設定**：
   - Chrome Side Panel 亮色／暗色雙主題，macOS／iOS 風格系統設計。
@@ -94,5 +97,15 @@ pnpm run package
 ```
 
 - 建置結果位於 `dist/`。
-- 上架安裝包位於 `release/diaochang-v0.0.11.zip`（每次原始碼變更後須重新打包）。
+- 上架安裝包位於 `release/diaochang-v0.0.12.zip`（每次原始碼變更後須重新打包）。
 - 載入測試：至 Chrome 網址列開啟 `chrome://extensions`，啟用右上角「開發人員模式」，點擊「載入未封裝項目」並選取專案中的 `dist/` 資料夾。開啟 YouTube 歌曲分頁後，點擊工具列「調唱」圖示即可使用。
+
+### 啟用 Google Drive 個人資料同步（開發者設定）
+
+一般本機建置不會放入 OAuth Client ID，因此設定頁會誠實顯示「開發者設定尚未完成」。建立與此擴充功能 ID 綁定的 Google Cloud「Chrome Extension」OAuth Client 後，使用環境變數建置：
+
+```bash
+DIAOCHANG_GOOGLE_OAUTH_CLIENT_ID='你的-client-id.apps.googleusercontent.com' pnpm run build
+```
+
+Client ID 只在建置時注入 `dist/manifest.json`；`.env`、Token 與使用者資料不提交至版本庫。使用者按下連動後才會要求 Drive API 網站權限與 `drive.appdata` 範圍。

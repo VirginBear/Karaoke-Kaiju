@@ -590,3 +590,56 @@
 - 回歸修正：節奏不明時 BPM 分析會回傳可理解錯誤，但不再把整個音訊工作階段標成 error；extension smoke 以無節奏 440 Hz fixture 驗證此失敗路徑後，移調、速度、循環、歌詞覆蓋與歌單流程仍維持 active。
 - 風險／下一步：需要用 YouTube、YouTube Music、本機音訊各至少三首歌曲記錄自動 BPM 與 TAP／標示 BPM 的誤差，並確認目前分頁音訊分析不造成輸出延遲或切歌回歸問題。
 
+## 2026-08-21 — 0.0.11 階梯式 A–B 練習序列
+
+- 任務：把既有的 A–B 循環延伸成可編輯的循序練習流程，讓使用者在同一個控制面板內依速度與重複次數逐階練唱，不開新視窗、不重新啟動面板。
+- 先立驗收標靶：
+  1. 純函式測試應將速度限制在 `0.25×`～`4.0×`、次數限制在 `1`～`20`，並依「重複目前階段 → 前進下一階 → 完成」順序回傳狀態。
+  2. 有效 A–B 時可展開編輯器、修改階段並啟動；沒有有效 A–B 時開始按鈕停用且顯示提示。
+  3. 啟動後立即套用第一階速度；每次 B→A 邊界依序切換階段；完成或手動停止後恢復原始速度。
+- 變更：
+  - `src/shared/practice-sequence.ts`：新增階梯資料正規化、執行狀態與邊界推進純函式。
+  - `src/shared/practice-sequence.test.ts`：新增速度／次數限制、重複／換階／完成與空序列測試。
+  - `src/sidepanel/usePracticeSequence.ts`：將 A–B 媒體狀態與階梯執行狀態連接，負責套用速度、偵測循環邊界與復原原速。
+  - `src/sidepanel/components/LoopControl.tsx`、`src/sidepanel/App.tsx`：加入階梯編輯器、進度狀態、停止與錯誤提示。
+  - `src/sidepanel/i18n.tsx`：補上繁中、English、日本語、简体中文介面文案。
+  - `TODO.md`、`README.md`、`docs/TESTING.md`：同步產品清單、使用說明與可重跑驗收步驟。
+- 驗證：
+  - `package.json` 與 `public/manifest.json` 版本均為 `0.0.11`。
+  - `pnpm run check` 通過：13 個測試檔、50 個測試全數通過；正式 Vite build 通過；DSP 移調最大誤差約 1.51 cents；Chrome extension smoke test `errors: []`。
+  - Browser 本機 `sidepanel.html?preview=bpm` 驗證：展開「編輯階梯」、修改 `0.75×` 為 `0.80×`、啟動後顯示 `第 1/3 階 · 0.80× · 第 1/1 次`；console warn/error 均為空。
+  - 來源碼與發布包 secret scan 無 `gsk_` 格式字串；測試使用不具金鑰格式的 ephemeral token。
+- 風險／下一步：目前以側邊面板約 500 ms 的媒體狀態更新判斷 B→A，極短循環可能漏掉邊界；下一步在 YouTube、YouTube Music、本機音訊各選歌曲測試長短不同的 A–B 段落，並量測切階準確度與操作手感。
+
+## 2026-08-21 — 0.0.12 儲存與 AI 音訊研究立項
+
+- 使用者目標：解決 Chrome Sync 配額快速上升，評估 Google Drive 個人應用程式資料儲存；下一版改以更高品質的人聲分離作為主軸，並改善中文／日文歌詞對時。
+- 現況判讀：目前 `getBytesInUse(null)` 顯示的是 Chrome `storage.sync` 約 100 KB 的擴充功能配額，不是 Drive 一般檔案容量。`unlimitedStorage` 只解決本機儲存，不會放大 Sync 配額。
+- 先立驗收標靶：Drive 遷移不能遺失本機資料；人聲分離需以同一測試音檔比較 Mid／Side 與 AI stem；歌詞對時需保留 confidence／unmatched，不用 AI 亂猜時間。
+- 變更：新增本機私有研究文件 `docs/private/ROADMAP_0.0.12.md`，加入 Drive `appDataFolder` OAuth、Demucs／UVR／ONNX Runtime Web、CJK 歌詞 forced alignment 與 GitHub 隱私界線；`.gitignore` 新增私人輸出、模型快取與環境檔隔離。
+- 尚未實作：Google Cloud Chrome Extension OAuth client 尚未建立，因此不把假 client ID 寫入 manifest；AI 分離尚未下載模型或加入正式包，等待合法的短音檔 fixture 與模型 license 審查。
+- 驗證：`pnpm run check` 通過（13 個測試檔、50 個測試、正式建置、DSP 音高測試與 extension smoke `errors: []`）。本次沒有 push、PR 或 GitHub repository visibility 變更。
+
+## 2026-08-21 — 0.0.12 Google Drive appDataFolder 大容量同步
+
+- 任務：把歌單與個人歌詞從 Chrome Sync 約 100 KB 配額限制，擴充成由使用者自行授權的 Google Drive 隱藏應用程式資料同步；不使用開發者後端、不在版本庫放 OAuth Client ID。
+- 使用者結果：設定頁新增「Google Drive 大容量同步」。正式設定 OAuth 後，第一次連動會比較本機與 Drive 資料，歌單與歌詞各自選擇較新版本再合併；之後本機變更會延遲 900 ms 自動同步。停用同步不刪雲端資料，使用者可另按「刪除我的 Drive 備份」永久刪除隱藏同步檔並保留本機資料。
+- 先立驗收標靶：同步 JSON 必須完整往返並以 checksum 拒絕竄改；Drive 查詢必須限制 `spaces=appDataFolder`；新檔 metadata 必須包含 `parents: ['appDataFolder']`；API 403 必須顯示錯誤；OAuth 只允許建置時注入 `drive.appdata`；未設定 Client ID 的普通 build 必須保持 UI 停用且不得假成功；刪除只 DELETE 已解析出的同步檔 ID。
+- 變更檔案：`src/shared/google-drive-sync.ts`、`src/shared/oauth-manifest.ts` 與測試；`src/sidepanel/google-drive-api.ts`、`google-drive-auth.ts`、`useGoogleDriveSync.ts` 與測試；`SettingsView.tsx`、`App.tsx`、歌單／歌詞 hooks、`i18n.tsx`、`styles.css`；`vite.config.ts`、`.env.example`、manifest、隱私政策、README、TODO、測試文件與官網版本 badge。
+- OAuth／權限：一般 build 不含 `oauth2`；`DIAOCHANG_GOOGLE_OAUTH_CLIENT_ID` 只有符合 `*.apps.googleusercontent.com` 格式才注入，而且 scope 固定為 `https://www.googleapis.com/auth/drive.appdata`。Drive API origin 保持 optional，只有使用者按下連動或刪除時請求。Token 不寫入 storage、文件或發布包。
+- 多語回歸：Browser 實際切換亮／暗色與繁中、English、日本語、简体中文；補齊設定頁後期新增的術語語言、繁簡偏好、播放偏好、Varispeed、BPM 與快捷鍵翻譯。四語 Drive／BPM 標籤均可定位，未設定 OAuth 時連動、立即同步與刪除按鈕均為 disabled。
+- 驗證命令：`pnpm run check`、OAuth 注入／普通 build 雙路徑 manifest 斷言、Browser DOM／互動驗收、`pnpm run package`、來源與 dist secret scan。
+- 驗證結果：16 個測試檔、61 個測試全數通過；Vite 正式建置通過；DSP 音高最大誤差約 1.51 cents；extension smoke `errors: []`；普通 `dist/manifest.json` 版本 0.0.12 且不含 `oauth2`；測試 Client ID build 只含 `drive.appdata`；`release/diaochang-v0.0.12.zip` 192,765 bytes（約 188.2 KB）；secret scan clean。
+- 未完成／風險：尚未建立真實 Google Cloud Chrome Extension OAuth Client，因此目前日常發布包會誠實顯示「待設定」，無法完成真實 Google 登入、上傳與第二台電腦下載驗收。相同資料類別在兩台電腦同時離線編輯仍採該類別的 newest-wins，未提供逐項合併 UI。
+- 下一步：建立專案 OAuth Client 並完成拒絕權限、離線、403、跨裝置與刪除實機驗收；其後依固定測試音檔啟動 Demucs／UVR 類本機 AI 人聲分離基準，不把 Mid/Side 誤稱完整去人聲。
+
+## 2026-08-21 — 0.0.12 品牌命名與視覺概念提案
+
+- 任務：重新檢視產品英文名稱、擴充功能圖示與官方介紹網站，使怪獸歌手角色、macOS／iOS 介面與四語內容形成一致品牌。
+- 使用者結果：確認 `Karaoke Monster` 已被 Chrome Web Store 同類擴充功能使用，因此不直接改名；提出 `Karaoke Kaiju` 作為推薦候選，完成角色輪廓、官網首屏、產品／進度區與創作者理念／CTA 三段概念圖。
+- 先立驗收標靶：正式圖示需在 16／32／48／128 px 可辨識、亮暗底可用、只用深墨色與系統藍；Manifest、四語 locale、側邊欄、README 與官網共用同一名稱；網站將功能分成已可用／實驗中／規劃中，不提供未上架的商店安裝連結。
+- 變更檔案：`docs/BRAND_DIRECTION.md`、`docs/brand-concepts/*.png`、`docs/DEVELOPMENT_LOG.md`。
+- 驗證命令：工作前執行 `pnpm run check`；人工檢視生成概念圖並確認網站資訊架構、顏色與產品狀態文案。
+- 驗證結果：基準版本 `package.json` 與 `public/manifest.json` 均為 0.0.12；16 個測試檔、61 個測試、正式建置、DSP 音高與 extension smoke `errors: []` 全部通過。概念圖已保存到專案供其他協作者共用。
+- 未完成／風險：目前是概念提案，尚未更換正式名稱或圖示。生成的角色輪廓包含漸層與非透明背景，只能當造型參考，不得直接進正式包；正式 SVG 與 16 px 專用版本需在名稱獲確認後重畫。名稱查核不是商標法律意見。
+- 下一步：取得 `Karaoke Kaiju` 名稱與概念方向確認後，先建立小尺寸圖示快照驗收，再同步實作擴充功能與官網品牌。

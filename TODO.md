@@ -1,13 +1,13 @@
 # 調唱（YouTube 卡拉 OK）開發待辦清單
 
 - 文件版本：1.0
-- 更新日期：2026-08-18
-- 產品階段：版本 0.0.11；核心練唱、歌單、歌詞工作台已完成，BPM 自動偵測已接上真實音訊分析；現正進行實機回歸與人聲分離可行性研究
+- 更新日期：2026-08-21
+- 產品階段：版本 0.0.12；Google Drive `appDataFolder` 大容量同步與安全 OAuth 建置注入已完成，待建立正式 OAuth Client 實機驗收；下一步為本機 AI 人聲分離基準測試
 - 使用方式：完成項目打勾，並在開發紀錄補上驗證結果；未經測試不得標記為完成
 
 ## 使用者目前最需要驗證的流程
 
-- [ ] 在日常 Chrome 載入 `dist/` 0.0.11，重新整理 YouTube 分頁。
+- [ ] 在日常 Chrome 載入 `dist/` 0.0.12，重新整理 YouTube 分頁。
 - [ ] 從目前歌曲分頁點一次「調唱」圖示，確認出現「音訊處理中」。
 - [ ] 使用 YouTube／YouTube Music 的目前分頁音訊產生 AI 動態時間碼。
 - [ ] 確認 AI 錄製完成後會恢復原本的速度、A–B、播放位置與播放狀態。
@@ -27,6 +27,7 @@
 - [x] 自然人聲／標準音訊模式切換。
 - [x] 速度調整、快捷速度與一鍵重設。
 - [x] A–B 循環、單曲循環、上一首／下一首與依序播放。
+- [x] 階梯式 A–B 練習序列：依速度與重複次數逐階練習，完成後恢復原速。
 - [x] 歌曲切換時維持同一個分頁與側邊面板，不建立新視窗。
 
 ### 介面與設定
@@ -45,6 +46,9 @@
 - [x] 單曲循環與歌單依序播放。
 - [x] 使用 Chrome Sync 與目前 Google／Chrome 帳號同步歌單。
 - [x] 同步資料採 local-first、分塊儲存、checksum 與 newest-wins。
+- [x] Google Drive 隱藏 `appDataFolder` 同步封包、checksum、Drive REST API 與 OAuth 安全建置注入。
+- [x] Drive 同步依歌單／歌詞各自更新時間合併，避免不同資料類別互相覆蓋。
+- [ ] 建立專案專用 Chrome Extension OAuth Client ID，實機完成授權、上傳、另一台電腦下載與拒絕權限驗收。
 - [ ] 以相同 Chrome／Google Sync 帳號在第二台電腦完成跨裝置驗收，並記錄同步延遲與配額。
 
 ### 歌詞、時間軸與多格式工作台
@@ -107,7 +111,7 @@
 - [ ] JSON 匯出與匯入，提供資料備份與搬移。
 - [ ] 顯示同步狀態、最後同步時間與衝突提示。
 - [ ] 針對離線後多台裝置同時修改，設計可理解的衝突處理 UI。
-- [ ] 研究歌詞超過 Chrome Sync 配額後的 Drive `appDataFolder` 方案。
+- [x] 實作歌詞超過 Chrome Sync 配額後的 Drive `appDataFolder` 方案與設定介面。
 - [ ] 明確說明 Chrome Sync 與 Google Drive 的資料位置、容量與刪除行為。
 - [ ] 驗收：另一台登入相同 Chrome／Google Sync 帳號的電腦能恢復歌單、preset、歌詞與顯示設定。
 
@@ -167,9 +171,9 @@
 
 ## 每次開發完成前的固定驗收
 
-- [ ] `pnpm run check` 通過。
-- [ ] 相關單元測試與 extension smoke test 通過。
-- [ ] `dist/manifest.json` 版本與文件版本一致。
+- [x] `pnpm run check` 通過。
+- [x] 相關單元測試與 extension smoke test 通過。
+- [x] `dist/manifest.json` 版本與文件版本一致。
 - [ ] 亮色、暗色與四種語言至少各檢查一次。
 - [ ] 320 × 900 與 420 × 900 無水平溢出。
 - [ ] 失敗流程有可理解的中文提示與下一步操作。

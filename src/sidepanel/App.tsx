@@ -19,7 +19,9 @@ import { TransportControls } from './components/TransportControls';
 import { I18nProvider, useI18n } from './i18n';
 import { useExtensionController } from './useExtensionController';
 import { useLyricsLibrary } from './useLyricsLibrary';
+import { useGoogleDriveSync } from './useGoogleDriveSync';
 import { usePlaylistLibrary } from './usePlaylistLibrary';
+import { usePracticeSequence } from './usePracticeSequence';
 import { usePreferences } from './usePreferences';
 import { useRecentHistory } from './useRecentHistory';
 import { useTheme } from './useTheme';
@@ -46,8 +48,16 @@ function AppContent({ preferenceApi }: { preferenceApi: ReturnType<typeof usePre
   const playlists = usePlaylistLibrary();
   const { preferences, updatePreferences, setModuleEnabled, resetPreferences } = preferenceApi;
   const { audio, media } = controller.state;
+  const practiceSequence = usePracticeSequence({ media, runMediaCommand });
   const recent = useRecentHistory(media, audio, preferences.autoSaveHistory);
   const lyrics = useLyricsLibrary(media, playlists.sync.enabled);
+  const driveSync = useGoogleDriveSync({
+    loaded: playlists.loaded && lyrics.loaded,
+    playlists: playlists.library,
+    lyrics: lyrics.library,
+    replacePlaylists: playlists.replaceLibrary,
+    replaceLyrics: lyrics.replaceLibrary,
+  });
   const keyNeedsToolbarInvocation = audio.status === 'error' && Boolean(audio.error?.includes('Chrome 工具列'));
 
   const updatePreference = useCallback((patch: Parameters<typeof updatePreferences>[0]) => {
@@ -160,12 +170,16 @@ function AppContent({ preferenceApi }: { preferenceApi: ReturnType<typeof usePre
             preferences={preferences}
             formantStrength={audio.formantStrength}
             playlistSync={playlists.sync}
+            driveSync={driveSync.state}
             onThemeChange={setTheme}
             onPreferencesChange={updatePreference}
             onModuleChange={setModuleEnabled}
             onAudioQualityChange={(formantStrength) => void controller.setAudioQuality(formantStrength)}
             onPlaylistSyncChange={playlists.setSyncEnabled}
             onRefreshGoogleAccount={playlists.refreshAccount}
+            onDriveSyncChange={driveSync.setEnabled}
+            onDriveSyncNow={driveSync.syncNow}
+            onDeleteDriveBackup={driveSync.deleteBackup}
             onClearHistory={recent.clearHistory}
             onResetSettings={() => { resetPreferences(); setTheme('light'); }}
           />
@@ -243,6 +257,10 @@ function AppContent({ preferenceApi }: { preferenceApi: ReturnType<typeof usePre
                     onSelectClip={(clip) => void controller.runMediaCommand({ kind: 'SET_LOOP_CLIP', clip })}
                     onSaveClip={(name) => void controller.runMediaCommand({ kind: 'SAVE_CURRENT_CLIP', name })}
                     onDeleteClip={(clipId) => void controller.runMediaCommand({ kind: 'DELETE_LOOP_CLIP', clipId })}
+                    sequence={practiceSequence.sequence}
+                    sequenceError={practiceSequence.error}
+                    onStartSequence={(steps) => void practiceSequence.startSequence(steps)}
+                    onCancelSequence={() => void practiceSequence.cancelSequence()}
                   />
                 ) : null}
                 {preferences.modules.vocalReducer ? (

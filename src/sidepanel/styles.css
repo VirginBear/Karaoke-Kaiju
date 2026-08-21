@@ -1466,6 +1466,14 @@ input:disabled {
   background: var(--danger-soft);
 }
 
+.settings-inline-success {
+  padding: 8px 9px;
+  margin: 0;
+  color: var(--success) !important;
+  border-radius: 8px;
+  background: var(--success-soft);
+}
+
 .sync-actions {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 36px;
@@ -1502,6 +1510,23 @@ input:disabled {
   color: var(--tertiary-text);
   font-size: 10px;
 }
+
+.drive-delete-button {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--danger);
+  border: 1px solid var(--danger-soft);
+  border-radius: 9px;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 640;
+  cursor: pointer;
+}
+
+.drive-delete-button:disabled { opacity: 0.42; cursor: default; }
 
 .segmented-control {
   display: grid;

@@ -1,6 +1,6 @@
 # 測試與載入方式
 
-## 自動驗證（版本 0.0.11）
+## 自動驗證（版本 0.0.12）
 
 ```bash
 pnpm install
@@ -37,11 +37,22 @@ DIAOCHANG_SOAK_SECONDS=600 pnpm run test:extension
 4. 按「載入未封裝項目」。
 5. 選擇本專案的 `dist/` 資料夾。
 6. 如果你仍安裝 `0.0.4` 或更舊且 Chrome 顯示成不同 extension ID，請先移除舊版，再重新選擇本專案的 `dist/` 載入；之後可直接按重新載入。
-7. 確認版本是 `0.0.11`。若 Chrome 顯示 Google 帳號資訊權限與 YouTube 網站權限，請允許；網站權限只包含 YouTube／YouTube Music。Groq 權限只會在你主動使用 AI 歌詞時另外詢問。
+7. 確認版本是 `0.0.12`。若 Chrome 顯示 Google 帳號資訊權限與 YouTube 網站權限，請允許；網站權限只包含 YouTube／YouTube Music。Groq 與 Google Drive API 網站權限只會在你主動使用對應功能時另外詢問。
 8. 重新整理 YouTube 分頁，開始播放歌曲，再從工具列或拼圖選單點一次「調唱」。
 9. 側邊面板應自動開啟並顯示「音訊處理中」。歌單切歌期間不需要再點圖示。
 
 如果媒體偵測失敗，新版會區分「無法連接目前分頁」與「頁面已連接，等待媒體」。如果媒體已找到、但 Chrome 還沒有授權擷取音訊，面板會明確請你回到目前 YouTube 分頁點一次「調唱」圖示。
+
+## 0.0.12 Google Drive `appDataFolder` 同步任務
+
+1. 普通執行 `pnpm run build`，確認 `dist/manifest.json` 不包含 `oauth2`，設定頁顯示「開發者設定尚未完成」，按鈕不可誤報成功。
+2. 在 Google Cloud 建立與固定 extension ID 對應的 Chrome Extension OAuth Client，使用 `DIAOCHANG_GOOGLE_OAUTH_CLIENT_ID='…apps.googleusercontent.com' pnpm run build` 重新建置。
+3. 確認 `dist/manifest.json` 只包含 `https://www.googleapis.com/auth/drive.appdata` OAuth scope，不含一般 Drive 全磁碟範圍。
+4. 到「設定 → Google Drive 大容量同步」按「授權並同步到我的 Drive」；允許提示後，確認顯示已連動與最後同步時間。
+5. 在本機新增歌單與歌詞，等候自動同步；於另一台使用同一 Google 帳號及同版擴充功能的電腦連動，確認較新的歌單與歌詞分別保留。
+6. 拒絕權限、離線與 Drive API 403 時，確認 UI 顯示真實錯誤且本機資料仍存在。
+7. 停止 Drive 自動同步後，確認本機仍可使用；停用動作不會自動刪除 Drive 備份。
+8. 按「刪除我的 Drive 備份」並確認後，驗證隱藏同步檔已刪除、自動同步關閉，但本機歌單與歌詞仍存在。
 
 ## 0.0.11 BPM 自動偵測任務
 
@@ -51,6 +62,18 @@ DIAOCHANG_SOAK_SECONDS=600 pnpm run test:extension
 4. 確認完成後顯示 BPM 與信心度，並可使用 TAP 或 `＋／−` 微調。
 5. 改用靜音、短音訊或未啟動音訊測試，確認顯示下一步提示而不是假成功。
 6. 把自動偵測結果與 TAP 測速、歌曲標示 BPM 比較，將誤差記在 `docs/DEVELOPMENT_LOG.md`。
+
+## 0.0.11 階梯式 A–B 練習序列任務
+
+1. 開啟可播放的 YouTube／YouTube Music 或本機音訊，點一次「調唱」並設定有效的 A、B 點。
+2. 在「A–B 段落循環」展開「編輯階梯」；確認預設有 `0.75× × 2`、`0.90× × 2`、`1.00× × 1` 三階。
+3. 修改任一階的速度（範圍 `0.25×`～`4.0×`）與次數（`1`～`20`），按「開始階梯練習」。
+4. 確認第一階立即套用，並看到「第 1/N 階」進度。每次 A–B 從 B 回到 A 時，重複次數應遞增；達到該階次數後應切換下一階速度。
+5. 最後一階完成後，確認階梯練習顯示完成，播放速度恢復啟動前的速度。練習中按「停止階梯」也應恢復原速。
+6. 清除 A–B 或設定無效段落時，開始按鈕應停用並顯示需要先設定 A–B 的提示。
+7. 先跑 `pnpm run check`，確認 `practice-sequence` 單元測試、型別檢查、正式建置與 extension smoke test 都通過；再於真實歌曲上記錄速度切換是否準時。
+
+目前階段的切換依側邊面板定期取得媒體時間狀態判斷 B→A 邊界；極短 A–B 片段仍需在真實網站上做額外手感與漏偵測驗證。
 
 ## 0.0.11 YouTube／YouTube Music AI 歌詞任務
 

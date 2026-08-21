@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { APP_LOCALES, useI18n } from '../i18n';
 import type { PlaylistSyncState } from '../usePlaylistLibrary';
+import type { GoogleDriveSyncState } from '../useGoogleDriveSync';
 import type { AppPreferences, ButtonSize, PracticeModule } from '../usePreferences';
 import type { AppTheme } from './HeaderStatus';
 
@@ -29,12 +30,16 @@ interface SettingsViewProps {
   preferences: AppPreferences;
   formantStrength: number;
   playlistSync: PlaylistSyncState;
+  driveSync: GoogleDriveSyncState;
   onThemeChange: (theme: AppTheme) => void;
   onPreferencesChange: (patch: Partial<AppPreferences>) => void;
   onModuleChange: (module: PracticeModule, enabled: boolean) => void;
   onAudioQualityChange: (formantStrength: number) => void;
   onPlaylistSyncChange: (enabled: boolean) => Promise<boolean>;
   onRefreshGoogleAccount: () => Promise<void>;
+  onDriveSyncChange: (enabled: boolean) => Promise<boolean>;
+  onDriveSyncNow: () => Promise<boolean>;
+  onDeleteDriveBackup: () => Promise<boolean>;
   onClearHistory: () => void;
   onResetSettings: () => void;
 }
@@ -44,12 +49,16 @@ export function SettingsView({
   preferences,
   formantStrength,
   playlistSync,
+  driveSync,
   onThemeChange,
   onPreferencesChange,
   onModuleChange,
   onAudioQualityChange,
   onPlaylistSyncChange,
   onRefreshGoogleAccount,
+  onDriveSyncChange,
+  onDriveSyncNow,
+  onDeleteDriveBackup,
   onClearHistory,
   onResetSettings,
 }: SettingsViewProps) {
@@ -59,6 +68,44 @@ export function SettingsView({
   return (
     <main className="settings-view">
       <SettingsSection title={t('settingsAccountSync')}>
+        <details className="settings-disclosure" open>
+          <summary className="settings-row">
+            <span className="settings-leading-icon settings-leading-icon--drive"><HardDrive size={19} /></span>
+            <span className="settings-copy">
+              <strong>{t('googleDriveSyncTitle')}</strong>
+              <small>{driveSync.configured ? t('googleDrivePrivateFolder') : t('googleDriveDeveloperHelp')}</small>
+            </span>
+            <span className={`settings-value ${driveSync.enabled ? 'settings-value--success' : ''}`}>{getDriveSyncStatusLabel(driveSync, t)}</span>
+            <ChevronRight className="disclosure-chevron" size={18} />
+          </summary>
+          <div className="settings-detail-copy settings-detail-copy--stacked">
+            <div className="settings-detail-line"><ShieldCheck size={17} /><p>{t('googleDriveSyncDescription')}</p></div>
+            <div className="settings-detail-line"><Info size={17} /><p>{t('googleDriveMigrationNote')}</p></div>
+            {driveSync.error ? <p className="settings-inline-error" role="status">{driveSync.error}</p> : null}
+            {driveSync.backupDeleted ? <p className="settings-inline-success" role="status">{t('googleDriveBackupDeleted')}</p> : null}
+            <div className="sync-actions">
+              <button
+                type="button"
+                className={driveSync.enabled ? 'sync-button sync-button--stop' : 'sync-button'}
+                disabled={!driveSync.configured || driveSync.phase === 'syncing' || driveSync.phase === 'authorizing'}
+                onClick={() => void onDriveSyncChange(!driveSync.enabled)}
+              >
+                {driveSync.phase === 'syncing' || driveSync.phase === 'authorizing' ? <LoaderCircle className="spin" size={16} /> : <Cloud size={16} />}
+                {!driveSync.configured ? t('googleDriveSetupRequired') : driveSync.enabled ? t('googleDriveDisconnect') : t('googleDriveConnect')}
+              </button>
+              <button type="button" className="sync-refresh" disabled={!driveSync.enabled || driveSync.phase !== 'idle'} onClick={() => void onDriveSyncNow()} aria-label={t('googleDriveSyncNow')}><RefreshCw size={16} /></button>
+            </div>
+            {driveSync.lastSyncedAt !== null ? <small className="sync-usage">{t('googleDriveLastSync', { time: new Date(driveSync.lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) })}</small> : null}
+            <button
+              type="button"
+              className="drive-delete-button"
+              disabled={!driveSync.configured || driveSync.phase === 'syncing' || driveSync.phase === 'authorizing'}
+              onClick={() => { if (window.confirm(t('googleDriveDeleteConfirm'))) void onDeleteDriveBackup(); }}
+            >
+              <Trash2 size={15} />{t('googleDriveDeleteBackup')}
+            </button>
+          </div>
+        </details>
         <details className="settings-disclosure">
           <summary className="settings-row">
             <span className="settings-leading-icon settings-leading-icon--drive"><CircleUserRound size={19} /></span>
@@ -96,15 +143,15 @@ export function SettingsView({
         <SettingControlRow icon={<Languages size={18} />} label={t('terminology')} description={t('terminologyDescription')}>
           <SelectControl value={preferences.terminologyLocale} ariaLabel={t('terminology')} onChange={(value) => onPreferencesChange({ terminologyLocale: value as AppPreferences['terminologyLocale'] })} options={APP_LOCALES} />
         </SettingControlRow>
-        <SettingControlRow icon={<Languages size={18} />} label="歌詞繁簡偏好" description="設定歌詞預設呈現之中文繁簡字體">
+        <SettingControlRow icon={<Languages size={18} />} label={t('lyricsScriptPreference')} description={t('lyricsScriptPreferenceDescription')}>
           <SelectControl
             value={preferences.lyricsScriptPreference ?? 'traditional'}
-            ariaLabel="歌詞繁簡偏好"
+            ariaLabel={t('lyricsScriptPreference')}
             onChange={(value) => onPreferencesChange({ lyricsScriptPreference: value as AppPreferences['lyricsScriptPreference'] })}
             options={[
-              { value: 'traditional', label: '一律轉換為繁體中文 (繁)' },
-              { value: 'simplified', label: '一律轉換為簡體中文 (简)' },
-              { value: 'original', label: '維持歌曲原始歌詞 (原)' },
+              { value: 'traditional', label: t('lyricsScriptTraditional') },
+              { value: 'simplified', label: t('lyricsScriptSimplified') },
+              { value: 'original', label: t('lyricsScriptOriginal') },
             ]}
           />
         </SettingControlRow>
@@ -178,7 +225,7 @@ export function SettingsView({
       </SettingsSection>
 
       <SettingsSection title={t('version')}>
-        <div className="settings-row"><span className="settings-leading-icon"><Info size={19} /></span><span className="settings-copy"><strong>{t('appName')}</strong><small>{t('allFeaturesFree')}</small></span><span className="settings-value">0.0.11</span></div>
+        <div className="settings-row"><span className="settings-leading-icon"><Info size={19} /></span><span className="settings-copy"><strong>{t('appName')}</strong><small>{t('allFeaturesFree')}</small></span><span className="settings-value">{__APP_VERSION__}</span></div>
       </SettingsSection>
     </main>
   );
@@ -231,4 +278,11 @@ function getSyncStatusLabel(sync: PlaylistSyncState, t: ReturnType<typeof useI18
   if (sync.enabled && sync.status === 'syncing') return t('syncLinked');
   if (sync.status === 'signed-in') return t('syncDisabled');
   return t('syncNotLinked');
+}
+
+function getDriveSyncStatusLabel(sync: GoogleDriveSyncState, t: ReturnType<typeof useI18n>['t']): string {
+  if (!sync.configured) return t('googleDriveSetupRequired');
+  if (sync.phase === 'authorizing' || sync.phase === 'syncing') return t('syncInProgress');
+  if (sync.enabled) return t('googleDriveLinked');
+  return t('googleDriveReady');
 }
