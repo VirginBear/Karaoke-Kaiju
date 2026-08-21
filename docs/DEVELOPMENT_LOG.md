@@ -664,3 +664,9 @@
 - 驗證：`pnpm run check` 通過（17 個測試檔、63 個測試、正式建置、DSP 音高最大誤差約 1.51 cents、Chrome extension smoke `errors: []`、品牌與公開發布規則 PASS）；`pnpm run package` 產出 `release/karaoke-kaiju-v0.1.0.zip` 197,421 bytes（約 192.8 KB），SHA-256 `d64d2ec102790b4064121667969037adeec06fce79ba57caae3f9cfa07b51bd6`。
 - 視覺驗收：官網在 `1440×900` 與 `390×844` 實測亮／暗主題、繁中／日文切換、Key `0 → +4 → 0`、速度與 A–B 重設；桌面與手機版均無水平溢出，console error／warning 為空。
 - 風險／下一步：公開版尚未接入真實 Google OAuth，也不承諾 AI 分離或 AI 對時品質。研究功能繼續在 `develop`／development build 驗證，只有達到可重跑、可量化且權限與隱私均通過的發布門檻後，才逐項進入下一個公開版本。
+
+## 2026-08-21 — 0.1.0 GitHub Actions runtime 維護
+
+- 任務：修正 0.1.0 合併後 GitHub Actions 顯示的 Node.js 20 action runtime 棄用警告。
+- 先立驗收標靶：依各 action 官方最新 release major 更新 CI 與 Pages 工作流程；新 PR 的完整 extension check 與合併後 Pages 部署都必須成功，且不再產生 Node.js 20 棄用 annotation。
+- 變更：`actions/checkout`、`actions/setup-node`、`actions/upload-artifact`、`pnpm/action-setup`、`actions/configure-pages`、`actions/upload-pages-artifact` 與 `actions/deploy-pages` 更新到 2026-08-21 官方最新 major。
