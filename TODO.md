@@ -1,5 +1,16 @@
 # Karaoke Kaiju 公開發布待辦
 
+## 跨平台相容性
+
+- [x] 建立同一份公開 `dist/` 在 macOS／Windows Chrome for Testing 執行的端到端驗收命令。
+- [x] macOS ARM64、Chrome for Testing stable 通過 Key、Speed、A–B、歌詞、歌單與同步 smoke test。
+- [ ] GitHub `windows-latest` 與 `macos-latest` 跨平台工作流程通過後，更新相容矩陣的 Windows 狀態。
+- [ ] 在一台 Windows Google Chrome Stable 116+ 人工載入 `dist/`，完成 YouTube／YouTube Music 聽感與切歌測試。
+- [ ] 發布前在日常 macOS Google Chrome Stable 人工載入最終 ZIP，再跑一次公開版清單。
+- [ ] iPad Orion 加入 API feature detection；缺少 `sidePanel`／`tabCapture`／`offscreen` 時不得崩潰或顯示假啟動。
+- [ ] 研究 Orion `sidebarAction` 介面降級，但在找到可驗證的 iPadOS 分頁音訊方案前，不宣稱支援升降 Key。
+- [ ] 實體 iPad 記錄 iPadOS／Orion 版本、安裝方式、API 錯誤、音高輸出與背景穩定性。
+
 ## 0.1.0 公開測試版
 
 - [x] 品牌名稱、方形怪獸歌手圖示、擴充功能與官網一致。

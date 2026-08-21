@@ -4,6 +4,16 @@ Karaoke Kaiju 是一款以唱歌練習為單一目的的 Chrome 側邊面板工�
 
 目前版本：**0.1.0 公開測試版**。尚未上架 Chrome Web Store，請從本專案建置後以開發人員模式安裝。
 
+## 平台支援
+
+| 平台 | 0.1.0 狀態 |
+| --- | --- |
+| macOS Google Chrome 116+ | 支援；與 Windows 使用同一份 ZIP |
+| Windows Google Chrome 116+ | 跨平台 CI 驗收中；與 macOS 使用同一份 ZIP |
+| iPadOS Orion Browser | 暫不支援完整功能；缺少已驗證的分頁音訊擷取／offscreen 路徑 |
+
+「Orion 可以安裝 Chrome 擴充功能」不代表本專案的即時升降 Key 音訊管線可用。測試證據、官方 API 對照與人工驗收步驟見 [平台相容性](docs/PLATFORM_COMPATIBILITY.md)。
+
 ## 公開測試版功能
 
 - YouTube、YouTube Music 與支援的 HTML5 媒體偵測。
@@ -60,6 +70,7 @@ pnpm run package
 
 - [使用手冊](docs/USER_MANUAL.md)
 - [測試與載入方式](docs/TESTING.md)
+- [平台相容性](docs/PLATFORM_COMPATIBILITY.md)
 - [Chrome Web Store 上架指南](docs/CHROME_WEB_STORE_GUIDE.md)
 - [隱私權政策](docs/PRIVACY_POLICY.md)
 - [產品與驗收規格](docs/PROJECT_SPEC.md)
