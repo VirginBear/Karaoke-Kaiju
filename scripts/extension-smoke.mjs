@@ -3,11 +3,13 @@ import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { chromium } from 'playwright';
+import { resolveBrowserLaunchOptions } from './browser-launch-options.mjs';
 
 const workspacePath = resolve(import.meta.dirname, '..');
 const extensionPath = join(workspacePath, 'dist');
 const soakSeconds = Number(process.env.DIAOCHANG_SOAK_SECONDS ?? 0);
 const screenshotPath = process.env.DIAOCHANG_SCREENSHOT_PATH;
+const browserLaunchOptions = resolveBrowserLaunchOptions();
 const userDataPath = await mkdtemp(join(tmpdir(), 'diaochang-extension-'));
 const qaExtensionPath = join(userDataPath, 'extension');
 const errors = [];
@@ -77,6 +79,7 @@ try {
 
   const launchContext = (allowlistedExtensionId) =>
     chromium.launchPersistentContext(userDataPath, {
+      ...browserLaunchOptions,
       headless: false,
       viewport: { width: 1120, height: 760 },
       args: [
@@ -570,6 +573,14 @@ try {
   });
 
   const result = {
+    runtime: {
+      browserTarget: browserLaunchOptions.channel
+        ?? browserLaunchOptions.executablePath
+        ?? 'playwright-chromium',
+      browserVersion: context.browser()?.version() ?? 'unknown',
+      operatingSystem: process.platform,
+      architecture: process.arch,
+    },
     extensionId,
     smokeUrl,
     publicUiSummary,
