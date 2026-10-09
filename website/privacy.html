@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-TW" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Karaoke Kaiju 隱私權政策 / Privacy Policy</title>
+  <meta name="description" content="Karaoke Kaiju 隱私權政策：說明我們如何在本機與 Chrome Sync 處理練唱設定，絕不販售或追蹤個人資料。">
+  <meta name="theme-color" content="#f5f5f7">
+  <link rel="icon" href="assets/karaoke-kaiju-app-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="index.html" aria-label="Karaoke Kaiju 首頁">
+        <img src="assets/karaoke-kaiju-app-icon.svg" alt="">
+        <span>Karaoke Kaiju</span>
+      </a>
+      <nav class="desktop-nav" aria-label="主要導覽">
+        <a href="index.html#features">功能</a>
+        <a href="index.html#how">怎麼使用</a>
+        <a href="support.html">支援與回饋</a>
+        <a href="https://github.com/VirginBear/Karaoke-Kaiju" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+      <div class="header-tools">
+        <button class="icon-button" id="theme-toggle" type="button" aria-label="切換亮暗主題">
+          <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell" style="padding-top: 48px; padding-bottom: 80px; max-width: 768px;">
+    <h1>Karaoke Kaiju 隱私權政策</h1>
+    <p style="color: var(--color-muted); margin-bottom: 32px;">版本 0.1.0 公開測試版 · 最近更新：2026 年 8 月 21 日</p>
+
+    <section style="margin-bottom: 36px;">
+      <h2>1. 資料處理原則</h2>
+      <p>Karaoke Kaiju 是專為 YouTube 與 YouTube Music 設計的 Chrome 側邊練唱工具。我們的核心原則是本機優先與零追蹤：</p>
+      <ul>
+        <li><strong>無外部伺服器與帳號系統：</strong>我們沒有開發者後端伺服器、資料庫、廣告或第三方追蹤程式。</li>
+        <li><strong>本機音訊處理：</strong>即時移調、音高微調與音訊過濾直接在您裝置的 Web Audio 管線內執行，音訊不會被錄製或上傳。</li>
+        <li><strong>本機資料儲存：</strong>您的歌單、歌曲 Key、速度、A–B 循環點與歌詞偏好，預設儲存在瀏覽器的 <code>chrome.storage.local</code>。</li>
+        <li><strong>選用雲端同步：</strong>若您主動開啟同步，資料會透過 Google 原生提供的 <code>chrome.storage.sync</code> 進行同步，資料完全依據您的 Google 帳戶管理，開發者無法取得您的密碼或瀏覽個人同步資料。</li>
+      </ul>
+    </section>
+
+    <section style="margin-bottom: 36px;">
+      <h2>2. 權限用途說明</h2>
+      <ul>
+        <li><code>tabCapture</code>：僅在使用者點擊圖示啟動工具後，擷取當前 YouTube 分頁音訊以進行即時升降調處理。</li>
+        <li><code>offscreen</code>：依 Chrome Manifest V3 標準，在背景音訊文件中執行低延遲 AudioWorklet。</li>
+        <li><code>sidePanel</code>：提供固定且直覺的側邊練唱控制面板。</li>
+        <li><code>storage</code>、<code>unlimitedStorage</code>：保存您的個人歌單、時間碼與歌詞快照。</li>
+        <li><code>identity</code>、<code>identity.email</code>：檢查目前 Chrome 使用者檔案的登入狀態，供選用 Chrome Sync 使用。</li>
+        <li><code>activeTab</code>、<code>scripting</code>：在您主動使用時，偵測 YouTube 影片播放狀態並掛載雙行 KTV 歌詞。</li>
+      </ul>
+    </section>
+
+    <section style="margin-bottom: 36px;">
+      <h2>3. 我們不販售或提供個人資料</h2>
+      <p><strong>我們不販售或提供個人資料</strong>給任何廣告商、行銷公司或資料經紀商。若您在擴充功能中刪除歌單或歷史紀錄，或解除安裝擴充功能，所有本機資料將會被 Chrome 立即清除。</p>
+    </section>
+
+    <section style="margin-bottom: 36px;">
+      <h2>4. 聯絡與問題回報</h2>
+      <p>若您對隱私權政策有任何疑問，或發現任何潛在問題，歡迎至公開問題追蹤頁面回報：</p>
+      <p><a href="https://github.com/VirginBear/Karaoke-Kaiju/issues" target="_blank" rel="noreferrer" class="button button-secondary" style="display: inline-flex; margin-top: 12px;">前往 GitHub Issues 回報</a></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <a class="brand" href="index.html"><img src="assets/karaoke-kaiju-app-icon.svg" alt=""><span>Karaoke Kaiju</span></a>
+      <nav aria-label="頁尾導覽">
+        <a href="index.html">首頁</a>
+        <a href="support.html">支援與回饋</a>
+        <a href="https://github.com/VirginBear/Karaoke-Kaiju" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+      <span>v0.1.0</span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

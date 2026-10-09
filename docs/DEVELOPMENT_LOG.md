@@ -680,3 +680,23 @@
 - Orion 結論：官方 iOS／iPadOS API 表未列出 `sidePanel`、`tabCapture`、`offscreen`，`storage.sync` 僅部分支援且未列 `identity.getProfileUserInfo`；目前不能提供核心升降 Key 或 Chrome Google 帳號同步的完整承諾，因此 `0.1.0` 不列為 iPad Orion 支援版本。
 - 跨平台 CI 結果：GitHub Windows x64 與 macOS ARM64 均使用 Chrome for Testing `152.0.7977.54` 通過完整 smoke test，兩者皆為 `errors: []`；既有 Linux `pnpm run check`／公開封包工作亦通過。
 - 未完成／風險：Chrome 137 起品牌正式版不允許自動化 `--load-extension`，所以 Windows／macOS Stable 最終安裝與聽感仍須保留人工實機驗收；iPad Orion 仍需獨立相容層與實體裝置。
+
+## 2026-10-10 — Chrome Web Store 上架必備：獨立隱私權頁、支援頁與回報範本
+
+- 任務：依 Chrome Web Store 審查規範，於官方網站建立公開可存取的獨立隱私權政策頁（`privacy.html`）、支援與回報管道頁（`support.html`），並補齊 GitHub Bug Report 範本與支援連結模組。
+- 先立驗收標靶：`scripts/brand-check.mjs` 增設官網 `privacy.html` 與 `support.html` 存在性、標題、`chrome.storage` 宣告、不販售個資宣告、聯絡信箱與 Patreon 連結之可執行斷言；`src/shared/support-links.test.ts` 驗證 feedback mailto 與 GitHub Issue URL 格式。
+- 變更檔案：
+  - `src/shared/support-links.ts`、`src/shared/support-links.test.ts`
+  - `website/privacy.html`、`website/support.html`、`website/index.html`
+  - `scripts/brand-check.mjs`
+  - `.github/ISSUE_TEMPLATE/bug_report.yml`
+- 驗證命令：`pnpm run check`、`pnpm run package`。
+- 驗證結果：
+  - 19 個測試檔、73 個單元測試全數 PASS。
+  - Vite 正式建置通過。
+  - 440 Hz DSP 音高誤差小於 1.6 cents。
+  - Chrome extension smoke test `errors: []`。
+  - Brand check、Release check PASS。
+  - `release/karaoke-kaiju-v0.1.0.zip` 成功產出（192.8 KB）。
+- 未完成／風險：上傳 Chrome Web Store 前需在開發人員資訊中心填寫此兩組網址（`https://virginbear.github.io/Karaoke-Kaiju/privacy.html` 與 `https://virginbear.github.io/Karaoke-Kaiju/support.html`）。
+- 下一步：推送到 GitHub 建立 PR 或合併發布。
