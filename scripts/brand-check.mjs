@@ -76,6 +76,24 @@ assert(websiteText.includes('找到你的 Key， 唱出你的歌。'), 'website 
 assert(website.includes('0.1.0 公開測試版；尚未於 Chrome Web Store 正式發布。'), 'website must disclose public-beta status');
 assert(!website.includes('chromewebstore.google.com'), 'website must not link to an unpublished Chrome Web Store listing');
 
+const privacyPage = await tryReadText('website/privacy.html');
+const privacyText = privacyPage.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+assert(privacyPage.includes('<title>Karaoke Kaiju 隱私權政策'), 'privacy page must have a clear Karaoke Kaiju title');
+assert(privacyText.includes('chrome.storage.local'), 'privacy page must disclose local extension storage');
+assert(privacyText.includes('chrome.storage.sync'), 'privacy page must disclose optional Chrome Sync');
+assert(privacyText.includes('我們不販售或提供個人資料'), 'privacy page must disclose that personal data is not sold');
+assert(privacyPage.includes('https://github.com/VirginBear/Karaoke-Kaiju/issues'), 'privacy page must provide a public support contact');
+assert(website.includes('href="privacy.html"'), 'website must link directly to the hosted privacy policy');
+
+const supportPage = await tryReadText('website/support.html');
+const supportText = supportPage.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+assert(supportPage.includes('<title>Karaoke Kaiju 意見回饋與支援'), 'support page must have a clear Karaoke Kaiju title');
+assert(supportPage.includes('mailto:94coarselover@gmail.com'), 'support page must provide the approved support email');
+assert(supportPage.includes('https://github.com/VirginBear/Karaoke-Kaiju/issues'), 'support page must link to GitHub Issues');
+assert(supportPage.includes('https://www.patreon.com/c/94uncle'), 'support page must link to the approved Patreon');
+assert(supportText.includes('重現步驟'), 'support page must ask users for reproducible steps');
+assert(website.includes('href="support.html"'), 'website must link directly to the hosted support page');
+
 const sidePanelI18n = await readText('src/sidepanel/i18n.tsx');
 assert((sidePanelI18n.match(/appName:\s*'Karaoke Kaiju'/g) ?? []).length === 4, 'all four side-panel locales must use Karaoke Kaiju');
 

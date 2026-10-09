@@ -1,0 +1,33 @@
+name: Bug Report / 問題回報
+description: 遇到問題或非預期行為時，請填寫此表單
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: 感謝回報！請盡量詳細提供重現步驟與系統資訊，以利快速排查。
+  - type: textarea
+    id: description
+    attributes:
+      label: 問題描述
+      description: 請清楚描述發生了什麼問題，以及預期的行為。
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 重現步驟
+      description: 依序說明如何觸發這個問題。
+      placeholder: |
+        1. 前往 YouTube 播放歌曲
+        2. 點擊 Karaoke Kaiju 側邊欄
+        3. 點擊升降 Key
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 環境資訊
+      description: Chrome 版本與作業系統（例如 Chrome 128 / macOS Sequoia）
+    validations:
+      required: false
